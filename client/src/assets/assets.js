@@ -296,3 +296,21 @@ export const footerLinks = [
     links: ["Instagram", "Twitter", "Facebook", "LinkedIn", "YouTube"],
   },
 ];
+
+export const sidebarLinks = [
+  { name: "Add Product", path: "/admin", icon: "/images/icons/add-icon.svg" },
+  {
+    name: "Product list",
+    path: "/admin/product-list",
+    icon: "/images/icons/product-list-icon.svg",
+  },
+  {
+    name: "orders",
+    path: "/admin/orders",
+    icon: "/images/icons/order_icon.svg",
+  },
+
+  // { name: "Dashboard", path: "/", icon: "/images/icons/product-list-icon.svg" },
+  // { name: "Overview", path: "/overview", icon: "overviewicon" },
+  // { name: "Chat", path: "/chat", icon: "chaticon" },
+];

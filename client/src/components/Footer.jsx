@@ -7,10 +7,10 @@ const Footer = () => {
         <div>
           <img
             className="w-34 md:w-32"
-            src="/images/BLogo.png"
+            src="/images/mirelogo.png"
             alt="dummyLogoColored"
           />
-          <p className="max-w-[410px] mt-2">
+          <p className="max-w-[410px] mt-6">
             Discover the latest in tech, fashion, and lifestyle. From best
             sellers to new arrivals, shop with confidence and enjoy exceptional
             service.

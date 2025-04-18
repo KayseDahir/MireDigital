@@ -2,7 +2,7 @@ import { useAppContext } from "../context/AppContext";
 
 function ProductCard({ product }) {
   const { addToCart, removeFromCart, cartItems } = useAppContext();
-  console.log(product);
+
   if (!product) {
     return <div>Product data is unavailable</div>;
   }

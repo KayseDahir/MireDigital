@@ -4,16 +4,22 @@ import { useAppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const { user, setUser, navigate, setShowUserLogin } = useAppContext();
+  const { user, setUser, navigate, setShowUserLogin, axios } = useAppContext();
 
+  console.log("User state in Navbar:", user);
   const handleLogout = async () => {
+    // try {
+    //   const { data } = await axios.get("")
+    // } catch (error) {
+    //   console.log(error.message);
+    // }
     setUser(null);
     navigate("/");
   };
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">
       <NavLink to="/" onClick={() => setOpen(false)}>
-        <img className="h-10" src="../images/BLogo.png" alt="logo" />
+        <img className="h-10" src="../images/mirelogo.png" alt="logo" />
       </NavLink>
 
       {/* Desktop Menu */}
@@ -29,9 +35,9 @@ const Navbar = () => {
             placeholder="Search products"
           />
           <img
-            src="/icons/search.png"
+            src="/images/search_icon.svg"
             alt="search"
-            className="w-6 h-6 opacity-90"
+            className="w-6 h-6 opacity-90 cursor-pointer"
           />
         </div>
 
@@ -39,20 +45,7 @@ const Navbar = () => {
           onClick={() => navigate("/cart")}
           className="relative cursor-pointer"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="#e67e22"
-            class="size-6"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-            />
-          </svg>
+          <img src="/images/nav_cart_icon.svg" />
 
           <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
             3
@@ -67,20 +60,7 @@ const Navbar = () => {
           </button>
         ) : (
           <div className="relative group">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="#e67e22"
-              className="size-7 cursor-pointer"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-              />
-            </svg>
+            <img src="/images/profile_icon.png"  className="w-10"/>
             <ul className="hidden group-hover:block absolute top-8 right-0 bg-white shadow-md rounded-md w-40 text-sm text-gray-700 z-50">
               <li
                 onClick={() => navigate("my-orders")}

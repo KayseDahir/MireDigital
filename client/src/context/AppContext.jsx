@@ -2,13 +2,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(true);
-  const [isSeller, setIsSeller] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
@@ -16,13 +17,55 @@ const AppProvider = ({ children }) => {
 
   const currency = import.meta.env.VITE_CURRENCY;
 
+  //Fetch Admin status
+  const fetchAdminStatus = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/admin/is-Auth",
+        {
+          withCredentials: true,
+        }
+      );
+      if (data.success) {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+      }
+    } catch (error) {
+      setIsAdmin(false);
+      console.log(error.message);
+    }
+  };
+
+  // Fetch User
+  const fetchUser = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/user/is-Auth",
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("Fetching user...");
+      console.log("User response:", data);
+      if (data.success) {
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   // Fetch All Products
   const fetchProducts = async () => {
     setProducts(dummyProducts);
   };
   useEffect(() => {
+    fetchUser();
+    fetchAdminStatus();
     fetchProducts();
-  });
+  }, []);
 
   // Add to cart
   const addToCart = (productId) => {
@@ -73,8 +116,10 @@ const AppProvider = ({ children }) => {
   const value = {
     user,
     setUser,
-    isSeller,
-    setIsSeller,
+    fetchUser,
+    isAdmin,
+    setIsAdmin,
+    fetchAdminStatus,
     navigate,
     showUserLogin,
     setShowUserLogin,
@@ -86,6 +131,7 @@ const AppProvider = ({ children }) => {
     cartItems,
     searchQuery,
     setSearchQuery,
+    axios,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

@@ -1,17 +1,40 @@
 import { useState } from "react";
 import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
+
 const Login = () => {
   const [state, setState] = useState("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { setShowUserLogin, setUser } = useAppContext();
+  const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
 
   const onSubmithandler = async (e) => {
-    e.preventDefault();
-    setUser();
-    setShowUserLogin(false);
+    try {
+      e.preventDefault();
+      const { data } = await axios.post(
+        `http://localhost:4000/api/user/${state}`,
+        {
+          name,
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+      if (data.success) {
+        setUser(data.user);
+        navigate("/");
+        setShowUserLogin(false);
+        toast.success(data.message);
+        console.log("User after login:", data.user);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error Response:", error.response);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
 
   return (
@@ -28,7 +51,7 @@ const Login = () => {
           <span className="text-primary">User</span>{" "}
           {state === "login" ? "Login" : "Sign Up"}
         </p>
-        {state === "register" && (
+        {state === "signup" && (
           <div className="w-full">
             <p>Name</p>
             <input
@@ -63,7 +86,7 @@ const Login = () => {
             required
           />
         </div>
-        {state === "register" ? (
+        {state === "signup" ? (
           <p>
             Already have account?{" "}
             <span
@@ -77,7 +100,7 @@ const Login = () => {
           <p>
             Create an account?{" "}
             <span
-              onClick={() => setState("register")}
+              onClick={() => setState("signup")}
               className="text-primary cursor-pointer"
             >
               click here
@@ -85,7 +108,7 @@ const Login = () => {
           </p>
         )}
         <button className="bg-primary hover:bg-indigo-600 transition-all text-white w-full py-2 rounded-md cursor-pointer">
-          {state === "register" ? "Create Account" : "Login"}
+          {state === "signup" ? "Create Account" : "Login"}
         </button>
       </form>
     </div>
