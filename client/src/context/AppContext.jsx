@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { dummyProducts } from "../assets/assets";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -14,6 +13,7 @@ const AppProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [cartItems, setCartItems] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
+  const [categories, setCategories] = useState([]);
 
   const currency = import.meta.env.VITE_CURRENCY;
 
@@ -46,8 +46,6 @@ const AppProvider = ({ children }) => {
           withCredentials: true,
         }
       );
-      console.log("Fetching user...");
-      console.log("User response:", data);
       if (data.success) {
         setUser(data.user);
       } else {
@@ -59,13 +57,24 @@ const AppProvider = ({ children }) => {
   };
   // Fetch All Products
   const fetchProducts = async () => {
-    setProducts(dummyProducts);
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/product/list",
+        {
+          withCredentials: true,
+        }
+      );
+      if (data.success) {
+        
+        setProducts(data.products);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message);
+    }
   };
-  useEffect(() => {
-    fetchUser();
-    fetchAdminStatus();
-    fetchProducts();
-  }, []);
 
   // Add to cart
   const addToCart = (productId) => {
@@ -113,6 +122,52 @@ const AppProvider = ({ children }) => {
     toast.success(`Product removed from cart`);
   };
 
+  // Get Cart Item count
+  const getCartItemCount = () => {
+    let totalCount = 0;
+    for (const item in cartItems) {
+      totalCount += cartItems[item];
+    }
+    return totalCount;
+  };
+
+  // Get Cart Total Amount
+  const getCartTotalAmount = () => {
+    let totalAmount = 0;
+    for (const items in cartItems) {
+      let itemInfo = products.find((product) => product._id === items);
+      if (cartItems[items] > 0) {
+        totalAmount += itemInfo.offerPrice * cartItems[items];
+      }
+    }
+    return Math.floor(totalAmount * 100) / 100;
+  };
+
+  // Fetch All Categories
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/user/categories",
+        {
+          withCredentials: true,
+        }
+      );
+      if (data.success) {
+        setCategories(data.categories);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+    fetchAdminStatus();
+    fetchProducts();
+    fetchCategories();
+  }, []);
   const value = {
     user,
     setUser,
@@ -132,6 +187,11 @@ const AppProvider = ({ children }) => {
     searchQuery,
     setSearchQuery,
     axios,
+    getCartItemCount,
+    getCartTotalAmount,
+    fetchProducts,
+    fetchCategories,
+    categories,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

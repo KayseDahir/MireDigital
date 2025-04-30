@@ -106,7 +106,9 @@ export const isAuth = async (req, res, next) => {
 
     const user = await User.findById(userId).select("-password");
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
 
     return res.status(200).json({
@@ -128,7 +130,9 @@ export const logout = async (req, res, next) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
     });
-    res.status(200).json({ message: "User logged out successfully." });
+    res
+      .status(200)
+      .json({ success: true, message: "User logged out successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });

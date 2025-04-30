@@ -1,0 +1,13 @@
+import express from "express";
+
+import * as orderController from "../controllers/order.js";
+import authUser from "../middlewares/authUser.js";
+import authAdmin from "../middlewares/authAdmin.js";
+
+const router = express.Router();
+
+router.post("/cod", authUser, orderController.placeOrderCOD);
+router.get("/user", authUser, orderController.getUserOrders);
+router.get("/admin", authAdmin, orderController.getAllOrders);
+
+export default router;

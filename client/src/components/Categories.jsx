@@ -1,57 +1,58 @@
 import { useAppContext } from "../context/AppContext";
 
-const categories = [
-  {
-    text: "Smartphones",
-    path: "smartphones",
-    image: "/images/Smartphones.jpg",
-    bgColor: "#fdf2e9",
-  },
-  {
-    text: "Laptops",
-    path: "laptops",
-    image: "/images/Laptops.jpg",
-    bgColor: "#fae5d3",
-  },
-  {
-    text: "Gaming Consoles",
-    path: "gaming-consoles",
-    image: "/images/GamingConsoles.jpg",
-    bgColor: "#eb984e",
-  },
-  {
-    text: "Smartwatches",
-    path: "smartwatches",
-    image: "/images/Smartwatches.jpg",
-    bgColor: "#cf711f",
-  },
-  {
-    text: "Accessories",
-    path: "accessories",
-    image: "/images/Accessories.jpg",
-    bgColor: "#e67e22",
-  },
-  {
-    text: "Tablets",
-    path: "tablets",
-    image: "/images/Tablets.jpg",
-    bgColor: "#fdf2e9",
-  },
-  {
-    text: "Headphones",
-    path: "headphones",
-    image: "/images/Headphones.jpg",
-    bgColor: "#fae5d3",
-  },
-  {
-    text: "Cameras",
-    path: "cameras",
-    image: "/images/Cameras.jpg",
-    bgColor: "#eb984e",
-  },
-];
+// const categories = [
+//   {
+//     text: "Smartphones",
+//     path: "smartphones",
+//     image: "/images/Smartphones.jpg",
+//     bgColor: "#fdf2e9",
+//   },
+//   {
+//     text: "Laptops",
+//     path: "laptops",
+//     image: "/images/Laptops.jpg",
+//     bgColor: "#fae5d3",
+//   },
+//   {
+//     text: "Gaming Consoles",
+//     path: "gaming-consoles",
+//     image: "/images/GamingConsoles.jpg",
+//     bgColor: "#eb984e",
+//   },
+//   {
+//     text: "Smartwatches",
+//     path: "smartwatches",
+//     image: "/images/Smartwatches.jpg",
+//     bgColor: "#cf711f",
+//   },
+//   {
+//     text: "Accessories",
+//     path: "accessories",
+//     image: "/images/Accessories.jpg",
+//     bgColor: "#e67e22",
+//   },
+//   {
+//     text: "Tablets",
+//     path: "tablets",
+//     image: "/images/Tablets.jpg",
+//     bgColor: "#fdf2e9",
+//   },
+//   {
+//     text: "Headphones",
+//     path: "headphones",
+//     image: "/images/Headphones.jpg",
+//     bgColor: "#fae5d3",
+//   },
+//   {
+//     text: "Cameras",
+//     path: "cameras",
+//     image: "/images/Cameras.jpg",
+//     bgColor: "#eb984e",
+//   },
+// ];
 function Categories() {
-  const { navigate } = useAppContext();
+  const { navigate, categories } = useAppContext();
+  console.log(categories);
   return (
     <div>
       <h2 className="text-2xl font-bold text-left mt-8 ">Categories</h2>
@@ -60,13 +61,13 @@ function Categories() {
           <div
             key={category.text}
             className="relative group cursor-pointer"
-            style={{ backgroundColor: category.bgColor }}
             onClick={() => {
-              navigate(`/products/${category.path.toLowerCase()}`);
+              navigate(`/products/${category.path.toLowerCase()}`),
+                window.scrollTo(0, 0);
             }}
           >
             <img
-              src={category.image}
+              src={`http://localhost:4000/${category.image.replace("\\", "/")}`} // Fix the image path
               alt={category.text}
               className="w-full h-full object-cover rounded-lg"
             />

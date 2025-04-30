@@ -8,6 +8,17 @@ import { useAppContext } from "./src/context/AppContext";
 import Login from "./src/components/Login";
 import AdminLogin from "./src/components/Admin/AdminLogin";
 import AdminLayout from "./src/pages/Admin/Layout";
+import ProductCategory from "./src/pages/ProductCategory";
+import ProductDetails from "./src/pages/productDetails";
+import AddProduct from "./src/pages/Admin/AddProduct";
+import Cart from "./src/pages/Cart";
+import AddAddress from "./src/pages/AddAddress";
+import MyOrders from "./src/pages/MyOrders";
+import ProductList from "./src/pages/Admin/ProductList";
+import Orders from "./src/pages/Admin/Orders";
+import AddNewCategory from "./src/pages/Admin/AddNewCategory";
+import InStock from "./src/pages/Admin/InStock";
+import Dashboard from "./src/pages/Admin/dashboard";
 
 function App() {
   const isAdminPath = useLocation().pathname.includes("/admin");
@@ -26,7 +37,19 @@ function App() {
           <Route
             path="/admin"
             element={isAdmin ? <AdminLayout /> : <AdminLogin />}
-          ></Route>
+          >
+            <Route index element={<AddProduct />} />
+            <Route path="/admin/add-category" element={<AddNewCategory />} />
+            <Route path="product-list" element={<ProductList />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="inStock" element={<InStock />} />
+            <Route path="dashboard" element={<Dashboard />} />
+          </Route>
+          <Route path="/products/:category" element={<ProductCategory />} />
+          <Route path="/product/:category/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/add-address" element={<AddAddress />} />
+          <Route path="/my-orders" element={<MyOrders />} />
         </Routes>
       </div>
       {!isAdminPath && <Footer />}

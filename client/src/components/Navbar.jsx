@@ -1,21 +1,49 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const { user, setUser, navigate, setShowUserLogin, axios } = useAppContext();
+  const {
+    user,
+    setUser,
+    navigate,
+    setShowUserLogin,
+    searchQuery,
+    setSearchQuery,
+    getCartItemCount,
+    axios,
+  } = useAppContext();
 
-  console.log("User state in Navbar:", user);
   const handleLogout = async () => {
-    // try {
-    //   const { data } = await axios.get("")
-    // } catch (error) {
-    //   console.log(error.message);
-    // }
-    setUser(null);
-    navigate("/");
+    try {
+      const { data } = await axios.post(
+        "http://localhost:4000/api/user/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        setUser(null);
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
+
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      navigate("/products");
+    }
+  }, [searchQuery]);
+
+
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">
       <NavLink to="/" onClick={() => setOpen(false)}>
@@ -30,6 +58,7 @@ const Navbar = () => {
 
         <div className="hidden lg:flex items-center text-sm gap-2 border border-gray-300 px-3 rounded-full">
           <input
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="py-1.5 w-full bg-transparent outline-none placeholder-gray-500"
             type="text"
             placeholder="Search products"
@@ -45,10 +74,10 @@ const Navbar = () => {
           onClick={() => navigate("/cart")}
           className="relative cursor-pointer"
         >
-          <img src="/images/nav_cart_icon.svg" />
+          <img src="/images/nav_cart_icon.svg" className="w-6 opacity-80" />
 
           <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
-            3
+            {getCartItemCount()}
           </button>
         </div>
         {!user ? (
@@ -60,7 +89,7 @@ const Navbar = () => {
           </button>
         ) : (
           <div className="relative group">
-            <img src="/images/profile_icon.png"  className="w-10"/>
+            <img src="/images/profile_icon.png" className="w-10" />
             <ul className="hidden group-hover:block absolute top-8 right-0 bg-white shadow-md rounded-md w-40 text-sm text-gray-700 z-50">
               <li
                 onClick={() => navigate("my-orders")}
@@ -79,24 +108,25 @@ const Navbar = () => {
         )}
       </div>
 
-      <button
-        onClick={() => (open ? setOpen(false) : setOpen(true))}
-        aria-label="Menu"
-        className="sm:hidden"
-      >
-        {/* Menu Icon SVG */}
-        <svg
-          width="21"
-          height="15"
-          viewBox="0 0 21 15"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+      <div className="flex items-center gap-6 sm:hidden">
+        <div
+          onClick={() => navigate("/cart")}
+          className="relative cursor-pointer"
         >
-          <rect width="21" height="1.5" rx=".75" fill="#426287" />
-          <rect x="8" y="6" width="13" height="1.5" rx=".75" fill="#426287" />
-          <rect x="6" y="13" width="15" height="1.5" rx=".75" fill="#426287" />
-        </svg>
-      </button>
+          <img src="/images/nav_cart_icon.svg" className="w-6 opacity-80" />
+
+          <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
+            {getCartItemCount()}
+          </button>
+        </div>
+        <button
+          onClick={() => (open ? setOpen(false) : setOpen(true))}
+          aria-label="Menu"
+          className=""
+        >
+          <img src="/images/menu_icon.svg" alt="menu" className="w-8 h-8" />
+        </button>
+      </div>
 
       {/* Mobile Menu */}
       {open && (

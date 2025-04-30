@@ -1,5 +1,6 @@
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useAppContext } from "../../context/AppContext";
+import { Children } from "react";
 
 const AdminLayout = () => {
   const { setIsAdmin } = useAppContext();
@@ -14,6 +15,27 @@ const AdminLayout = () => {
       name: "orders",
       path: "/admin/orders",
       icon: "/icons/order_icon.svg",
+    },
+    {
+      name: "Inventory",
+      icon: "/icons/inventory.svg",
+      Children: [
+        {
+          name: "InStock",
+          path: "/admin/InStock",
+          icon: "/icons/in-stock.svg",
+        },
+        {
+          name: "OutStock",
+          path: "/admin/out-of-stock",
+          icon: "/icons/out-stock.svg",
+        },
+      ],
+    },
+    {
+      name: "Dashboard",
+      path: "/admin/dashboard",
+      icon: "/icons/dashboard.svg",
     },
   ];
 
@@ -42,7 +64,7 @@ const AdminLayout = () => {
         </div>
       </div>
       <div className="flex ">
-        <div className="md:w-64 w-16 border-r h-[550px] text-base border-gray-300 pt-4 flex flex-col transition-all duration-300">
+        <div className="md:w-64 w-16 border-r h-[95vh] text-base border-gray-300 pt-4 flex flex-col ">
           {sidebarLinks.map((item) => (
             <NavLink
               to={item.path}
