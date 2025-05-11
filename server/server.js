@@ -14,6 +14,7 @@ import addressRoutes from "./routes/address.js";
 import orderRoutes from "./routes/order.js";
 
 import connectCloudinary from "./configs/cloudinary.js";
+import { stripeWebhook } from "./controllers/order.js";
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -32,6 +33,8 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
 ];
+app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhook);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: allowedOrigins, credentials: true }));

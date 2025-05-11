@@ -1,28 +1,28 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
-import { dummyAddress } from "../assets/assets";
+import toast from "react-hot-toast";
+import EmptyCart from "../components/EmptyCart";
 
 function Cart() {
   const [showAddress, setShowAddress] = useState(false);
   const [cartArray, setCartArray] = useState([]);
-  const [addresses, setAddresses] = useState(dummyAddress);
-  const [selectedAddress, setSelectedAddress] = useState(dummyAddress[0]);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const [payementOption, setPayementOption] = useState("COD");
 
   const {
     products,
     cartItems,
+    setCartItems,
     removeFromCart,
     getCartItemCount,
     getCartTotalAmount,
-    updateCartQuantity,
     navigate,
+    axios,
+    user,
   } = useAppContext();
 
   const getCart = () => {
-    console.log("Products:", products);
-    console.log("Cart Items:", cartItems);
-
     let tempArray = [];
     for (const key in cartItems) {
       const product = products.find((item) => item._id === key);
@@ -34,22 +34,103 @@ function Cart() {
     setCartArray(tempArray);
   };
 
+  const getUserAddress = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/address/get",
+        {
+          withCredentials: true,
+        }
+      );
+      if (data.success) {
+        setAddresses(data.addresses);
+        if (data.addresses.length > 0) {
+          setSelectedAddress(data.addresses[0]);
+        }
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error("Failed to fetch addresses. Please try again.");
+    }
+  };
+
   useEffect(() => {
-    console.log("Products:", products); // Check if products are being fetched correctly
-    console.log("Cart Items:", cartItems);
     if (products.length > 0 && cartItems) {
       getCart();
     }
   }, [products, cartItems]);
 
-  const placeOrder = async () => {};
+  useEffect(() => {
+    if (user) {
+      getUserAddress();
+    }
+  }, [user]);
+
+  const placeOrder = async () => {
+    try {
+      if (!selectedAddress) {
+        toast.error("Please select a delivery address.");
+        return;
+      }
+      if (payementOption === "COD") {
+        const { data } = await axios.post(
+          "http://localhost:4000/api/order/cod",
+          {
+            userId: user._id,
+            items: cartArray.map((item) => ({
+              product: item._id,
+              quantity: item.quantity,
+            })),
+            address: selectedAddress._id,
+          },
+          { withCredentials: true }
+        );
+
+        if (data.success) {
+          toast.success(data.message);
+          setCartItems({});
+          navigate("/my-orders");
+        } else {
+          toast.error(data.message);
+        }
+      } else {
+        // place order with stripe
+        const { data } = await axios.post(
+          "http://localhost:4000/api/order/online",
+          {
+            userId: user._id,
+            items: cartArray.map((item) => ({
+              product: item._id,
+              quantity: item.quantity,
+            })),
+            address: selectedAddress._id,
+          },
+          { withCredentials: true }
+        );
+
+        if (data.success) {
+          window.location.replace(data.url);
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Error placing order:",
+        error.response?.data || error.message
+      );
+      toast.error("Failed to place order. Please try again.");
+    }
+  };
 
   if (!products || products.length === 0) {
     return <p>Loading products...</p>;
   }
 
   if (!cartItems || Object.keys(cartItems).length === 0) {
-    return <p>Your cart is empty.</p>;
+    return <EmptyCart />;
   }
 
   return (
@@ -97,7 +178,19 @@ function Cart() {
                   </p>
                   <div className="flex items-center">
                     <p>Qty:</p>
-                    <select className="outline-none">
+                    <select
+                      value={cartItems[product._id]}
+                      onChange={(e) => {
+                        const newQuantity = parseInt(e.target.value, 10);
+                        setCartItems((prevCartItems) => ({
+                          ...prevCartItems,
+                          [product._id]: newQuantity,
+                        }));
+                        getCart(); // Update the cart array
+                        toast.success("Cart updated.");
+                      }}
+                      className="outline-none"
+                    >
                       {Array(
                         cartItems[product._id] > 9 ? cartItems[product._id] : 9
                       )
@@ -128,7 +221,10 @@ function Cart() {
           </div>
         ))}
 
-        <button className="group cursor-pointer flex items-center mt-8 gap-2 text-indigo-500 font-medium">
+        <button
+          className="group cursor-pointer flex items-center mt-8 gap-2 text-indigo-500 font-medium"
+          onClick={() => navigate("/products")}
+        >
           <img
             onClick={() => {
               navigate("/products");

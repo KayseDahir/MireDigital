@@ -7,6 +7,7 @@ import authAdmin from "../middlewares/authAdmin.js";
 const router = express.Router();
 
 router.post("/cod", authUser, orderController.placeOrderCOD);
+router.post("/online", authUser, orderController.placeOrderOnline);
 router.get("/user", authUser, orderController.getUserOrders);
 router.get("/admin", authAdmin, orderController.getAllOrders);
 

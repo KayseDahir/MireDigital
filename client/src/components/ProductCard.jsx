@@ -1,86 +1,69 @@
 import { useAppContext } from "../context/AppContext";
 
 function ProductCard({ product }) {
-  const { addToCart, removeFromCart, cartItems, navigate } = useAppContext();
+  const { navigate } = useAppContext();
 
   if (!product) {
     return <div>Product data is unavailable</div>;
   }
+
   return (
     <div
       onClick={() => {
         navigate(`/product/${product.category.toLowerCase()}/${product._id}`);
         scrollTo(0, 0);
       }}
-      className="border border-gray-500/20 rounded-md md:px-4 px-3 py-2 bg-white min-w-56 max-w-56 w-full"
+      className="border border-transparent rounded-lg shadow-none hover:border-gray-300 hover:shadow-md transition-shadow bg-white w-full h-[350px] flex flex-col justify-between p-4 overflow-hidden"
     >
-      <div className="group cursor-pointer flex items-center justify-center px-2">
+      {/* Image Section */}
+      <div className="group cursor-pointer flex items-center justify-center h-[150px] overflow-hidden">
         <img
-          className="group-hover:scale-105 transition max-w-26 md:max-w-36"
+          className="group-hover:scale-105 transition-transform max-h-full object-contain"
           src={product.image[0]}
           alt={product.name}
         />
       </div>
-      <div className="text-gray-500/60 text-sm">
-        <p>{product.category}</p>
-        <p className="text-gray-700 font-medium text-lg truncate w-full">
-          {product.name}
+
+      {/* Content Section */}
+      <div className="flex flex-col justify-between flex-1 mt-4 overflow-hidden">
+        {/* Category and Name */}
+        <div className="overflow-hidden">
+          <p className="text-gray-500 text-xs uppercase tracking-wide truncate">
+            {product.category}
+          </p>
+          <p className="text-gray-800 font-semibold text-lg truncate">
+            {product.name}
+          </p>
+        </div>
+        {/* Description */}
+        <p className="text-gray-600 text-sm line-clamp-2 mt-2">
+          {product.description}
         </p>
-        <div className="flex items-center gap-0.5">
+        {/* Price Section */}
+        <div className="flex items-end justify-between">
+          <p className="text-indigo-600 font-semibold text-lg">
+            ${product.offerPrice}{" "}
+            <span className="text-gray-400 text-sm line-through">
+              ${product.price}
+            </span>
+          </p>
+        </div>
+
+        {/* Rating */}
+        <div className="flex items-center gap-1 ">
           {Array(5)
             .fill("")
             .map((_, i) => (
               <img
+                key={i}
                 src={
                   i < 4 ? "/icons/star_icon.svg" : "/icons/star_dull_icon.svg"
                 }
                 alt="star"
+                className="w-4 h-4"
               />
             ))}
-          <p>(4)</p>
-        </div>
-        <div className="flex items-end justify-between mt-3">
-          <p className="md:text-xl text-base font-medium text-indigo-500">
-            ${product.offerPrice}{" "}
-            <span className="text-gray-500/60 md:text-sm text-xs line-through">
-              ${product.price}
-            </span>
-          </p>
-          <div onClick={(e) => e.stopPropagation()} className="text-indigo-500">
-            {!cartItems[product._id] ? (
-              <button
-                className="flex items-center justify-center gap-1 bg-tertiary border border-indigo-300 md:w-[80px] w-[64px] h-[34px] rounded text-gray-50 font-medium cursor-pointer"
-                onClick={() => addToCart(product._id)}
-              >
-                <img
-                  src="/icons/cart_icon.svg"
-                  alt="cart"
-                  className="w-4 h-4"
-                />
-                Add
-              </button>
-            ) : (
-              <div className="flex items-center justify-center gap-2 md:w-20 w-16 h-[34px] bg-indigo-500/25 rounded select-none">
-                <button
-                  onClick={() => {
-                    removeFromCart(product._id);
-                  }}
-                  className="cursor-pointer text-md px-2 h-full"
-                >
-                  -
-                </button>
-                <span className="w-5 text-center">
-                  {cartItems[product._id]}
-                </span>
-                <button
-                  onClick={() => addToCart(product._id)}
-                  className="cursor-pointer text-md px-2 h-full"
-                >
-                  +
-                </button>
-              </div>
-            )}
-          </div>
+          <p className="text-gray-500 text-xs">(4)</p>
         </div>
       </div>
     </div>

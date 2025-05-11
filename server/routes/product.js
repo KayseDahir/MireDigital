@@ -13,6 +13,8 @@ router.post(
 );
 router.get("/list", productController.productList);
 router.get("/id", productController.productById);
+router.post("/update", authAdmin, productController.updateProduct);
 router.post("/stock", authAdmin, productController.changeStock);
+router.post("/delete", authAdmin, productController.deleteProduct);
 
 export default router;

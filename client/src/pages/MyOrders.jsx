@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react";
-import { dummyOrders } from "../assets/assets";
+import { useAppContext } from "../context/AppContext";
 
 function MyOrders() {
   const [myOrders, setMyOrders] = useState([]);
+  const { axios } = useAppContext();
 
   const fetchMyOrders = async () => {
     try {
-      setMyOrders(dummyOrders);
+      const { data } = await axios.get("http://localhost:4000/api/order/user", {
+        withCredentials: true,
+      });
+      if (data.success) {
+        console.log("My Orders Data:", data.orders);
+        setMyOrders(data.orders);
+      } else {
+        console.error("API response indicates failure:", data.message);
+      }
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error(
+        "Error fetching orders:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -24,6 +36,7 @@ function MyOrders() {
       </div>
       {myOrders.length > 0
         ? myOrders.map((order, index) => {
+            console.log(`Order ${index} Items:`, order.items);
             return (
               // Add return here
               <div
@@ -36,6 +49,7 @@ function MyOrders() {
                   <span>TotalAmount : $ {order.amount}</span>
                 </p>
                 {order.items.map((item, index) => {
+                  console.log(`Item ${index} Product:`, item.product);
                   return (
                     <div
                       key={index}
@@ -47,7 +61,7 @@ function MyOrders() {
                         <div className="bg-primary/10 p-4 rounded-lg">
                           <img
                             className="w-16 h-16"
-                            src={item.product.image[0]}
+                            src={item.product?.image[0]}
                             alt=""
                           />
                         </div>

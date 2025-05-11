@@ -19,6 +19,9 @@ import Orders from "./src/pages/Admin/Orders";
 import AddNewCategory from "./src/pages/Admin/AddNewCategory";
 import InStock from "./src/pages/Admin/InStock";
 import Dashboard from "./src/pages/Admin/dashboard";
+import OutStock from "./src/pages/Admin/OutStock";
+import Loading from "./src/components/Loading";
+import ProductManagement from "./src/pages/Admin/ProductManagement";
 
 function App() {
   const isAdminPath = useLocation().pathname.includes("/admin");
@@ -34,6 +37,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<AllProducts />} />
+          <Route path="/loader" element={<Loading />} />
+
           <Route
             path="/admin"
             element={isAdmin ? <AdminLayout /> : <AdminLogin />}
@@ -43,12 +48,15 @@ function App() {
             <Route path="product-list" element={<ProductList />} />
             <Route path="orders" element={<Orders />} />
             <Route path="inStock" element={<InStock />} />
+            <Route path="outStock" element={<OutStock />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="product-management" element={<ProductManagement />} />
           </Route>
+
           <Route path="/products/:category" element={<ProductCategory />} />
           <Route path="/product/:category/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/add-address" element={<AddAddress />} />
+          <Route path="/add-adress" element={<AddAddress />} />
           <Route path="/my-orders" element={<MyOrders />} />
         </Routes>
       </div>

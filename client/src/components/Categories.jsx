@@ -52,7 +52,6 @@ import { useAppContext } from "../context/AppContext";
 // ];
 function Categories() {
   const { navigate, categories } = useAppContext();
-  console.log(categories);
   return (
     <div>
       <h2 className="text-2xl font-bold text-left mt-8 ">Categories</h2>

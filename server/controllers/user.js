@@ -98,8 +98,6 @@ export const login = async (req, res, next) => {
 export const isAuth = async (req, res, next) => {
   try {
     const userId = req.userId; // Set by authUser middleware
-    console.log("User ID from middleware:", userId); // Debug log
-
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }

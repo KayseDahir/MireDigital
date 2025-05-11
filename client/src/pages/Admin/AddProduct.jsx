@@ -9,9 +9,10 @@ const AddProduct = () => {
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState(0);
   const [offerPrice, setOfferPrice] = useState(0);
+  const [quantity, setQuantity] = useState(0);
 
   const { axios, categories, navigate } = useAppContext();
-  console.log("Categories:", categories);
+
   const onSubmithandler = async (e) => {
     try {
       e.preventDefault();
@@ -22,6 +23,7 @@ const AddProduct = () => {
         category,
         price,
         offerPrice,
+        quantity,
       };
 
       const formData = new FormData();
@@ -44,6 +46,7 @@ const AddProduct = () => {
         setCategory("");
         setPrice(0);
         setOfferPrice(0);
+        setQuantity(0);
       } else {
         toast.error(data.message);
       }
@@ -91,6 +94,7 @@ const AddProduct = () => {
               ))}
           </div>
         </div>
+
         <div className="flex flex-col gap-1 max-w-md">
           <label className="text-base font-medium" htmlFor="product-name">
             Product Name
@@ -179,6 +183,20 @@ const AddProduct = () => {
               required
             />
           </div>
+        </div>
+        <div className="flex-1 flex flex-col gap-1 w-32">
+          <label className="text-base font-medium" htmlFor="product-quantity">
+            Product Quantity
+          </label>
+          <input
+            onChange={(e) => setQuantity(e.target.value)}
+            value={quantity}
+            id="product-quantity"
+            type="number"
+            placeholder="0"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            required
+          />
         </div>
         <button
           onClick={onSubmithandler}

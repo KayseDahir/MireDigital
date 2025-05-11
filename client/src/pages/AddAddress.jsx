@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useAppContext } from "../context/AppContext";
 
 //Input Filed component
 function InputField({ type, placeholder, name, handleChange, address }) {
@@ -24,15 +26,49 @@ function AddAddress() {
     country: "",
     zipCode: "",
     phone: "",
+    email: "",
   });
+
+  const { axios, navigate, user } = useAppContext();
   const handleChange = (e) => {
     const { name, value } = e.target;
     setAddress((prev) => ({ ...prev, [name]: value }));
   };
   const onSubmitHandler = async (e) => {
+    try {
+      const { data } = await axios.post(
+        "http://localhost:4000/api/address/add",
+        { address },
+        {
+          withCredentials: true,
+        }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        setAddress({
+          firstName: "",
+          lastName: "",
+          street: "",
+          city: "",
+          state: "",
+          country: "",
+          zipCode: "",
+          phone: "",
+          email: "",
+        });
+        navigate("/cart");
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
     e.preventDefault();
   };
 
+  useEffect(() => {
+    if (!user) {
+      navigate("/cart");
+    }
+  }, []);
   return (
     <div className="mt-16 pb-16">
       <p className="text-2xl md:text-3xl text-gray-500">

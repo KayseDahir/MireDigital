@@ -1,11 +1,25 @@
 import { useEffect, useState } from "react";
-import { dummyOrders } from "../../assets/assets";
+import toast from "react-hot-toast";
+import { useAppContext } from "../../context/AppContext";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
+  const { axios } = useAppContext();
 
   const fetchOrders = async () => {
-    setOrders(dummyOrders);
+    try {
+      const { data } = await axios.get("http://localhost:4000/api/order/admin", {
+        withCredentials: true,
+      });
+      if (data.success) {
+        setOrders(data.orders);
+        console.log(data.orders);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   useEffect(() => {
@@ -24,7 +38,7 @@ function Orders() {
             <div className="flex gap-5 max-w-80">
               <img
                 className="w-12 h-12 object-cover "
-                src="/images/box-icon.svg"
+                src={order.items[0].product.image[0]}
                 alt="boxIcon"
               />
               <div>
@@ -39,20 +53,26 @@ function Orders() {
               </div>
             </div>
 
-            <div className="text-sm md:text-base text-black/60">
-              <p className="text-black/80">
-                {order.address.firstName} {order.address.lastName}
-              </p>
-              <p>
-                {order.address.street}, {order.address.city}
-              </p>
-              <p>
-                {order.address.state},{order.address.zipcode},{" "}
-                {order.address.country}
-              </p>
-              <p></p>
-              <p>{order.address.phone}</p>
-            </div>
+            {order.address ? (
+              <div className="text-sm md:text-base text-black/60">
+                <p className="text-black/80">
+                  {order.address.firstName} {order.address.lastName}
+                </p>
+                <p>
+                  {order.address.street}, {order.address.city}
+                </p>
+                <p>
+                  {order.address.state},{order.address.zipcode},{" "}
+                  {order.address.country}
+                </p>
+                <p></p>
+                <p>{order.address.phone}</p>
+              </div>
+            ) : (
+              <div className="text-sm md:text-base text-black/60">
+                <p className="text-red-500">Address information is missing</p>
+              </div>
+            )}
 
             <p className="font-medium text-lg my-auto ">${order.amount}</p>
 

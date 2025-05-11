@@ -48,6 +48,7 @@ const AppProvider = ({ children }) => {
       );
       if (data.success) {
         setUser(data.user);
+         console.log("Fetch User Response:", data);
       } else {
         setUser(null);
       }
@@ -65,7 +66,6 @@ const AppProvider = ({ children }) => {
         }
       );
       if (data.success) {
-        
         setProducts(data.products);
       } else {
         toast.error(data.message);
@@ -162,6 +162,21 @@ const AppProvider = ({ children }) => {
     }
   };
 
+  // Function to update a product in the global state
+  const updateProduct = (updatedProduct) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product._id === updatedProduct._id ? updatedProduct : product
+      )
+    );
+    toast.success("Product updated successfully!");
+  };
+  const deleteProduct = (productId) => {
+    setProducts((prevProducts) =>
+      prevProducts.filter((product) => product._id !== productId)
+    );
+  };
+
   useEffect(() => {
     fetchUser();
     fetchAdminStatus();
@@ -184,6 +199,7 @@ const AppProvider = ({ children }) => {
     updateCartQuantity,
     removeFromCart,
     cartItems,
+    setCartItems,
     searchQuery,
     setSearchQuery,
     axios,
@@ -192,6 +208,9 @@ const AppProvider = ({ children }) => {
     fetchProducts,
     fetchCategories,
     categories,
+    setProducts,
+    updateProduct,
+    deleteProduct,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

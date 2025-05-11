@@ -9,10 +9,10 @@ const authUser = (req, res, next) => {
 
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Decoded Token:", decodedToken); // Debug log
+
     if (decodedToken.id) {
       req.userId = decodedToken.id; // Set userId for the next middleware
-      console.log("req.userId:", req.userId);
+
       next();
     } else {
       return res.status(401).json({ message: "Unauthorized" });
