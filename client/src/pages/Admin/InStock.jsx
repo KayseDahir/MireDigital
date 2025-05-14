@@ -183,58 +183,49 @@ function InStock() {
       </Typography>
 
       {/* Search, Sort, and Filter */}
-      <Grid
-        container
-        spacing={2}
-        style={{ marginBottom: "1rem", justifyContent: "flex-end" }} // Align to the left
+      <div
+        style={{
+          marginBottom: "1rem",
+          display: "flex",
+          justifyContent: "flex-end",
+          gap: "1rem", // Add spacing between controls
+        }}
       >
         {/* Search */}
-        <Grid item xs={12} sm={4}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            size="small"
-            fullWidth
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </Grid>
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ padding: "0.5rem" }}
+        />
 
         {/* Sort */}
-        <Grid item xs={12} sm={4}>
-          <FormControl fullWidth size="small" style={{ minWidth: "200px" }}>
-            <InputLabel>Sort By Price</InputLabel>
-            <Select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              label="Sort By Price"
-            >
-              <SelectMenuItem value="asc">Low to High</SelectMenuItem>
-              <SelectMenuItem value="desc">High to Low</SelectMenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          style={{ padding: "0.5rem" }}
+        >
+          <option value="asc">Price: Low to High</option>
+          <option value="desc">Price: High to Low</option>
+        </select>
 
         {/* Filter */}
-        <Grid item xs={12} sm={4}>
-          <FormControl fullWidth size="small" style={{ minWidth: "200px" }}>
-            <InputLabel>Filter by Category</InputLabel>
-            <Select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              label="Filter by Category"
-            >
-              <SelectMenuItem value="">All</SelectMenuItem>
-              {Array.from(new Set(products.map((p) => p.category))).map(
-                (category) => (
-                  <SelectMenuItem key={category} value={category}>
-                    {category}
-                  </SelectMenuItem>
-                )
-              )}
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          style={{ padding: "0.5rem" }}
+        >
+          <option value="">All Categories</option>
+          {Array.from(new Set(products.map((p) => p.category))).map(
+            (category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            )
+          )}
+        </select>
+      </div>
 
       {/* Table */}
       <Paper>

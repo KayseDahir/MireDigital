@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { sendOtpEmail } from "../utilities/sendOtpEmail.js";
 
 // Register user
 
@@ -23,8 +24,21 @@ export const signup = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({ name, email, password: hashedPassword });
+    //Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    //save user with OTP and unverified status
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      otp,
+      verified: false,
+    });
     await user.save();
+
+    // Send OTP to user's email
+    await sendOtpEmail(email, otp);
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -48,6 +62,39 @@ export const signup = async (req, res, next) => {
   }
 };
 
+// verify OTP Eendpoint : /api/user/verify-otp
+export const verifyOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    //check if the OTP matches
+    if (user.otp !== otp) {
+      return res.status(400).json({ success: false, message: "Invalid OTP" });
+    }
+
+    //Mark the user as verified and clear the OTP
+    user.verified = true;
+    user.otp = null;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "OTP verified successfully. Your account is now active.",
+    });
+  } catch (error) {
+    console.error("Error in verifyOtp controller:", error.message); // Debug log
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 // Login user
 
 export const login = async (req, res, next) => {
@@ -63,6 +110,17 @@ export const login = async (req, res, next) => {
       return res
         .status(400)
         .json({ success: false, message: "Invalid credentials." });
+    }
+
+    //check if the user is verified
+    if (!user.verified) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message:
+            "Please verify your account using the OTP sent to your email.",
+        });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);

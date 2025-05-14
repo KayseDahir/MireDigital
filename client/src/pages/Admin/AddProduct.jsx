@@ -9,7 +9,7 @@ const AddProduct = () => {
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState(0);
   const [offerPrice, setOfferPrice] = useState(0);
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState(1);
 
   const { axios, categories, navigate } = useAppContext();
 
@@ -46,7 +46,7 @@ const AddProduct = () => {
         setCategory("");
         setPrice(0);
         setOfferPrice(0);
-        setQuantity(0);
+        setQuantity(1);
       } else {
         toast.error(data.message);
       }

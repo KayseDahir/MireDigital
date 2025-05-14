@@ -16,6 +16,8 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    verified: { type: Boolean, default: false },
+    otp: { type: String },
     cartItems: { type: Object, default: {} },
   },
   { minimize: false }

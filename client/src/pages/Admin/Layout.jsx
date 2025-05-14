@@ -96,27 +96,27 @@ const AdminLayout = () => {
   }, []); // Empty dependency array ensures it runs only once
   return (
     <>
-      <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white">
+      <div className="flex items-center justify-between px-6 md:px-10 py-4 bg-white shadow-sm ">
         <Link to={"/"}>
           <img
-            className="cursor-pointer w-34 md:w-38"
+            className="cursor-pointer w-28 md:w-32"
             src="/images/mirelogo.png"
             alt="logo"
           />
         </Link>
-        <div className="flex items-center gap-5 ">
-          <p className="text-gray-500">Hi! {userName} </p>
+        <div className="flex items-center gap-4">
+          <p className="text-gray-600 text-sm md:text-base">Hi! {userName} </p>
           <button
             onClick={handleLogout}
             navigate={"/"}
-            className="border rounded-full text-md px-4 py-2 bg-primary text-white cursor-pointer"
+            className="rounded-full text-sm md:text-base px-4 py-2 bg-primary text-white hover:bg-primary-dark transition"
           >
             Logout
           </button>
         </div>
       </div>
       <div className="flex">
-        <div className="md:w-64 w-16 border-r h-[95vh] text-base border-gray-300 pt-4 flex flex-col">
+        <div className="md:w-60 w-16 h-[95vh] bg-gray-50 text-gray-700 flex flex-col pt-6">
           {sidebarLinks.map((item) => {
             // Check if the item has children (dropdown)
             if (item.children) {
@@ -139,9 +139,9 @@ const AdminLayout = () => {
                           to={child.path}
                           key={child.name}
                           className={({ isActive }) =>
-                            `flex items-center py-2 px-4 gap-3 ${
+                            `flex items-center py-2 px-4 gap-3 text-sm ${
                               isActive
-                                ? "text-primary"
+                                ? "text-primary font-medium"
                                 : "hover:bg-gray-100/90 text-gray-500"
                             }`
                           }
@@ -162,9 +162,9 @@ const AdminLayout = () => {
                 to={item.path}
                 key={item.name}
                 className={({ isActive }) =>
-                  `flex items-center py-3 px-4 gap-3 ${
+                  `flex items-center py-3 px-4 gap-3 text-sm ${
                     isActive
-                      ? "text-primary"
+                      ? "text-primary font-medium"
                       : "hover:bg-gray-100/90 text-gray-500"
                   }`
                 }
@@ -175,7 +175,9 @@ const AdminLayout = () => {
             );
           })}
         </div>
-        <Outlet />
+        <div className="flex-1 p-6 ">
+          <Outlet />
+        </div>
       </div>
     </>
   );
