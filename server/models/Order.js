@@ -25,9 +25,20 @@ const orderSchema = new Schema(
       required: true,
       ref: "Address",
     },
-    status: { type: String, default: "order placed" },
+    status: {
+      type: String,
+      enum: ["pending", "Shipped", "Delivered"],
+      default: "pending",
+    },
     paymentType: { type: String, required: true },
     isPaid: { type: Boolean, default: false },
+    zone: { type: String, required: true },
+    otp: { type: String, required: true },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
   },
   { timestamps: true }
 );

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useAppContext } from "../context/AppContext";
 
-//Input Filed component
+// Input Field component
 function InputField({ type, placeholder, name, handleChange, address }) {
   return (
     <input
@@ -16,7 +16,9 @@ function InputField({ type, placeholder, name, handleChange, address }) {
     />
   );
 }
+
 function AddAddress() {
+  const [zones, setZones] = useState([]); // Store zones fetched from the backend
   const [address, setAddress] = useState({
     firstName: "",
     lastName: "",
@@ -27,14 +29,40 @@ function AddAddress() {
     zipCode: "",
     phone: "",
     email: "",
+    zone: "", // Add zone field
   });
 
   const { axios, navigate, user } = useAppContext();
+
+  // Fetch zones from the backend
+  useEffect(() => {
+    const fetchZones = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:4000/api/public/zones"
+        );
+        console.log("Fetched zones response:", data); // Debug log
+        if (data.success) {
+          setZones(data.data); // Correctly access the zones from data.data
+          console.log("Zones state updated:", data.data); // Debug log
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        console.error("Error fetching zones:", error); // Debug log
+        toast.error(error.response?.data?.message || "Failed to fetch zones");
+      }
+    };
+    fetchZones();
+  }, [axios]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setAddress((prev) => ({ ...prev, [name]: value }));
   };
+
   const onSubmitHandler = async (e) => {
+    e.preventDefault();
     try {
       const { data } = await axios.post(
         "http://localhost:4000/api/address/add",
@@ -55,13 +83,13 @@ function AddAddress() {
           zipCode: "",
           phone: "",
           email: "",
+          zone: "",
         });
         navigate("/cart");
       }
     } catch (error) {
       toast.error(error.message);
     }
-    e.preventDefault();
   };
 
   useEffect(() => {
@@ -69,6 +97,7 @@ function AddAddress() {
       navigate("/cart");
     }
   }, []);
+
   return (
     <div className="mt-16 pb-16">
       <p className="text-2xl md:text-3xl text-gray-500">
@@ -132,8 +161,8 @@ function AddAddress() {
                 address={address}
               />
               <InputField
-                type=""
-                placeholder="country"
+                type="text"
+                placeholder="Country"
                 name="country"
                 handleChange={handleChange}
                 address={address}
@@ -145,6 +174,30 @@ function AddAddress() {
               address={address}
               handleChange={handleChange}
             />
+            {/* Zone Dropdown */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Zone
+              </label>
+              <select
+                name="zone"
+                value={address.zone}
+                onChange={handleChange}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm"
+                required
+              >
+                <option value="">Select a zone</option>
+                {zones && zones.length > 0 ? (
+                  zones.map((zone) => (
+                    <option key={zone._id} value={zone.name}>
+                      {zone.name}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>No zones available</option>
+                )}
+              </select>
+            </div>
             <button
               type="submit"
               className="w-full mt-6 py-3 text-white bg-primary hover:bg-indigo-600 transition-all cursor-pointer rounded-md uppercase"

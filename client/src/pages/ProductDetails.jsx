@@ -13,7 +13,7 @@ const ProductDetails = () => {
   // const [hoveredColor, setHoveredColor] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const { products, navigate, addToCart, user, cartItems } = useAppContext();
+  const { products, navigate, addToCart, regularUser, cartItems } = useAppContext();
   const { id } = useParams();
 
   const product = products.find((product) => product._id === id);
@@ -39,7 +39,7 @@ const ProductDetails = () => {
   }, [product]);
 
   const handleAddToCart = () => {
-    if (!user) {
+    if (!regularUser) {
       setShowLoginModal(true);
       return;
     }
@@ -51,7 +51,7 @@ const ProductDetails = () => {
   };
 
   const handleBuyNow = () => {
-    if (!user) {
+    if (!regularUser) {
       setShowLoginModal(true);
       return;
     }

@@ -22,17 +22,36 @@ import Dashboard from "./src/pages/Admin/dashboard";
 import OutStock from "./src/pages/Admin/OutStock";
 import Loading from "./src/components/Loading";
 import ProductManagement from "./src/pages/Admin/ProductManagement";
+import CreateDeliveryMan from "./src/pages/Admin/CreateDeliveryMan";
+import DeliveryMenList from "./src/pages/Admin/DeliveryMenList";
+import DeliveryManLogin from "./src/pages/DeliveryManLogin";
+import DeliveryDashboard from "./src/pages/DeliveryDashboard";
+import ProtectedDeliveryManRoute from "./src/components/ProtectedDeliveryManRoute";
+import DeliveryManProvider from "./src/context/DeliveryManContext";
+import OrdersByStatus from "./src/pages/Admin/OrdersByStatus";
+import OrdersByStatusSelector from "./src/pages/Admin/OrdersByStatusSelector";
 
 function App() {
-  const isAdminPath = useLocation().pathname.includes("/admin");
+  const location = useLocation();
+  const isAdminPath = location.pathname.includes("/admin");
+  const isDeliveryManLogin = location.pathname === "/delivery-man/login";
+  const isDeliveryManDashboard = location.pathname.startsWith(
+    "/delivery-man/dashboard"
+  );
   const { showUserLogin, isAdmin } = useAppContext();
   return (
     <div className="text-default min-h-screen text=gray-700 bg-white">
-      {isAdminPath ? null : <Navbar />}
+      {isAdminPath || isDeliveryManLogin || isDeliveryManDashboard ? null : (
+        <Navbar />
+      )}
       {showUserLogin && <Login />}
       <Toaster />
       <div
-        className={`${isAdminPath ? "" : "px-6 md:px-16 lg:px-16 xl:px-32"}`}
+        className={`${
+          isAdminPath || isDeliveryManLogin
+            ? ""
+            : "px-6 md:px-16 lg:px-16 xl:px-32"
+        }`}
       >
         <Routes>
           <Route path="/" element={<Home />} />
@@ -49,9 +68,23 @@ function App() {
             <Route path="orders" element={<Orders />} />
             <Route path="inStock" element={<InStock />} />
             <Route path="outStock" element={<OutStock />} />
+            <Route path="create-delivery-man" element={<CreateDeliveryMan />} />
+            <Route path="delivery-men" element={<DeliveryMenList />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="OrdersByStatus" element={<OrdersByStatusSelector />} />
+            <Route path="OrdersByStatus/:status" element={<OrdersByStatus />} />
             <Route path="product-management" element={<ProductManagement />} />
           </Route>
+
+          <Route path="/delivery-man/login" element={<DeliveryManLogin />} />
+          <Route
+            path="/delivery-man/dashboard"
+            element={
+              <ProtectedDeliveryManRoute>
+                <DeliveryDashboard />
+              </ProtectedDeliveryManRoute>
+            }
+          />
 
           <Route path="/products/:category" element={<ProductCategory />} />
           <Route path="/product/:category/:id" element={<ProductDetails />} />
@@ -60,7 +93,7 @@ function App() {
           <Route path="/my-orders" element={<MyOrders />} />
         </Routes>
       </div>
-      {!isAdminPath && <Footer />}
+      {!isAdminPath && !isDeliveryManLogin && <Footer />}
     </div>
   );
 }

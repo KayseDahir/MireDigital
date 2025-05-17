@@ -16,9 +16,15 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      enum: ["user", "admin", "deliveryMan"],
+      default: "user",
+    },
     verified: { type: Boolean, default: false },
     otp: { type: String },
     cartItems: { type: Object, default: {} },
+    zone: { type: mongoose.Schema.Types.ObjectId, ref: "Zone", default: null },
   },
   { minimize: false }
 );

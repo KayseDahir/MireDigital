@@ -1,4 +1,12 @@
 import toast from "react-hot-toast";
+import {
+  HiOutlineCube,
+  HiOutlineTag,
+  HiOutlineCurrencyDollar,
+  HiOutlineCheckCircle,
+  HiOutlineCheck,
+  HiOutlineXMark,
+} from "react-icons/hi2";
 import { useAppContext } from "../../context/AppContext";
 
 function ProductList() {
@@ -29,15 +37,33 @@ function ProductList() {
           All Products
         </h2>
         <div className="flex flex-col items-center max-w-4xl w-full overflow-hidden rounded-lg bg-white shadow-md border border-gray-200">
-          <table className="table-auto w-full">
+          <table className="table-auto w-full  min-w-[700px]">
             <thead className="bg-gray-100 text-gray-800 text-sm font-medium">
               <tr>
-                <th className="px-4 py-3 text-left">Product</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left hidden md:table-cell">
-                  Selling Price
+                <th className="px-4 py-3 text-left min-w-[160px] whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <HiOutlineCube className="inline w-5 h-5 text-primary" />
+                    Product
+                  </div>
                 </th>
-                <th className="px-4 py-3 text-left">In Stock</th>
+                <th className="px-4 py-3 text-left min-w-[140px] whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <HiOutlineTag className="inline w-5 h-5 text-primary" />
+                    Category
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-left hidden md:table-cell min-w-[160px] whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <HiOutlineCurrencyDollar className="inline w-5 h-5 text-primary" />
+                    Selling Price
+                  </div>
+                </th>
+                <th className="px-4 py-3 text-left min-w-[140px] whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <HiOutlineCheckCircle className="inline w-5 h-5 text-primary" />
+                    In Stock
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody className="text-sm text-gray-500">
@@ -65,8 +91,14 @@ function ProductList() {
                         type="checkbox"
                         className="sr-only peer"
                       />
-                      <div className="w-12 h-7 bg-slate-300 rounded-full peer peer-checked:bg-blue-600 transition-colors duration-200"></div>
-                      <span className="dot absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-5"></span>
+                      <div className="w-12 h-7 bg-slate-300 rounded-full peer peer-checked:bg-green-500 transition-colors duration-200"></div>
+                      <span className="dot absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-5 flex items-center justify-center">
+                        {product.inStock ? (
+                          <HiOutlineCheck className="text-green-500 w-4 h-4" />
+                        ) : (
+                          <HiOutlineXMark className="text-gray-400 w-4 h-4" />
+                        )}
+                      </span>
                     </label>
                   </td>
                 </tr>

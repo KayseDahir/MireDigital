@@ -9,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
 
-  const { setShowUserLogin, setUser, axios, navigate } = useAppContext();
+  const { setShowUserLogin, setRegularUser, axios, navigate } = useAppContext();
 
   const onSubmithandler = async (e) => {
     try {
@@ -55,7 +55,7 @@ const Login = () => {
           { withCredentials: true }
         );
         if (data.success) {
-          setUser(data.user);
+          setRegularUser(data.user);
           navigate("/");
           setShowUserLogin(false);
           toast.success(data.message);

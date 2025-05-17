@@ -4,6 +4,7 @@ import Address from "../models/Address.js";
 export const addAddress = async (req, res) => {
   try {
     const { address } = req.body;
+    console.log("Address received in request:", address);
     const newAddress = {
       ...address,
       userId: req.userId, // Ensure userId is added here

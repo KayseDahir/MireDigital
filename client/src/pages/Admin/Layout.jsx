@@ -2,50 +2,89 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
+import {
+  HiOutlineCube, // Product
+  HiOutlineClipboardDocumentList, // Product list
+  HiOutlinePlusCircle, // Add Product
+  HiOutlineShoppingBag, // Orders
+  HiOutlineArchiveBox, // Inventory
+  HiOutlineCheckCircle, // InStock
+  HiOutlineXCircle, // OutStock
+  HiOutlineTruck, // Delivery Management
+  HiOutlineUserPlus, // Create Delivery Man
+  HiOutlineUsers, // Delivery Men List
+  HiOutlineDocumentText, // OrdersByStatus
+  HiOutlineChartBar, // Dashboard
+} from "react-icons/hi2";
 
 const AdminLayout = () => {
   const { navigate, axios, setIsAdmin, user } = useAppContext();
-  const [openDropdown, setOpenDropdown] = useState(null); // Track which dropdown is open
+  const [openDropdown, setOpenDropdown] = useState([]); // Track which dropdown is open
 
   const userName = user?.email ? user.email.split("@")[0] : "Admin";
   const sidebarLinks = [
     {
       name: "Product",
-      icon: "/icons/product.png",
+      icon: <HiOutlineCube className="w-6 h-6" />,
       children: [
-        { name: "Add Product", path: "/admin", icon: "/icons/add-icon.svg" },
+        {
+          name: "Add Product",
+          path: "/admin",
+          icon: <HiOutlinePlusCircle className="w-5 h-5" />,
+        },
         {
           name: "Product list",
           path: "/admin/product-list",
-          icon: "/icons/product-list-icon.svg",
+          icon: <HiOutlineClipboardDocumentList className="w-5 h-5" />,
         },
       ],
     },
     {
-      name: "orders",
+      name: "Orders",
       path: "/admin/orders",
-      icon: "/icons/order_icon.svg",
+      icon: <HiOutlineShoppingBag className="w-7 h-7" />,
     },
     {
       name: "Inventory",
-      icon: "/icons/inventory.svg",
+      icon: <HiOutlineArchiveBox className="w-7 h-7" />,
       children: [
         {
           name: "InStock",
           path: "/admin/InStock",
-          icon: "/icons/in-stock.svg",
+          icon: <HiOutlineCheckCircle className="w-5 h-5" />,
         },
         {
           name: "OutStock",
           path: "/admin/outStock",
-          icon: "/icons/out-stock.svg",
+          icon: <HiOutlineXCircle className="w-5 h-5" />,
+        },
+      ],
+    },
+    {
+      name: "Delivery Management",
+      icon: <HiOutlineTruck className="w-7 h-7" />,
+      children: [
+        {
+          name: "Create Delivery Man",
+          path: "/admin/create-delivery-man",
+          icon: <HiOutlineUserPlus className="w-5 h-5" />,
+        },
+        {
+          name: "Delivery Men List",
+          path: "/admin/delivery-men",
+          icon: <HiOutlineUsers className="w-5 h-5" />,
+        },
+        {
+          name: "OrdersByStatus",
+          path: "/admin/OrdersByStatus",
+          icon: <HiOutlineDocumentText className="w-5 h-5" />,
         },
       ],
     },
     {
       name: "Dashboard",
       path: "/admin/dashboard",
-      icon: "/icons/dashboard.svg",
+      icon: <HiOutlineChartBar className="w-7 h-7" />,
     },
   ];
 
@@ -69,7 +108,9 @@ const AdminLayout = () => {
   };
 
   const toggleDropdown = (name) => {
-    setOpenDropdown((prev) => (prev === name ? null : name));
+    setOpenDropdown((prev) =>
+      prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]
+    );
   };
   useEffect(() => {
     const checkAuth = async () => {
@@ -127,12 +168,12 @@ const AdminLayout = () => {
                     className={`flex items-center py-3 px-4 gap-3 cursor-pointer hover:bg-gray-100/90`}
                     onClick={() => toggleDropdown(item.name)}
                   >
-                    <img src={item.icon} alt="" className="w-7 h-7" />
+                    {item.icon}
                     <p className="md:block hidden text-center">{item.name}</p>
                   </div>
 
                   {/* Render children if dropdown is open */}
-                  {openDropdown === item.name && (
+                  {openDropdown.includes(item.name) && (
                     <div className="ml-8">
                       {item.children.map((child) => (
                         <NavLink
@@ -146,7 +187,7 @@ const AdminLayout = () => {
                             }`
                           }
                         >
-                          <img src={child.icon} alt="" className="w-5 h-5" />
+                          {child.icon}
                           <p>{child.name}</p>
                         </NavLink>
                       ))}
@@ -169,7 +210,7 @@ const AdminLayout = () => {
                   }`
                 }
               >
-                <img src={item.icon} alt="" className="w-7 h-7" />
+                {item.icon}
                 <p className="md:block hidden text-center">{item.name}</p>
               </NavLink>
             );

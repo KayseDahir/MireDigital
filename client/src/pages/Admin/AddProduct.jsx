@@ -1,4 +1,11 @@
 import { useState } from "react";
+import {
+  HiOutlineCube,
+  HiOutlineDocumentText,
+  HiOutlineTag,
+  HiOutlineCurrencyDollar,
+  HiOutlinePhoto,
+} from "react-icons/hi2";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 
@@ -99,15 +106,18 @@ const AddProduct = () => {
           <label className="text-base font-medium" htmlFor="product-name">
             Product Name
           </label>
-          <input
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            id="product-name"
-            type="text"
-            placeholder="Type here"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-            required
-          />
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 focus-within:ring-2 focus-within:ring-primary transition">
+            <HiOutlineCube className="w-5 h-5 text-gray-400 mr-2" />
+            <input
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              id="product-name"
+              type="text"
+              placeholder="Type here"
+              className="flex-1 outline-none bg-transparent"
+              required
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-1 max-w-md">
           <label

@@ -8,12 +8,24 @@ const AppContext = createContext();
 const AppProvider = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [regularUser, setRegularUser] = useState(null);
+  const [deliveryMan, setDeliveryMan] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showUserLogin, setShowUserLogin] = useState(false);
   const [products, setProducts] = useState([]);
-  const [cartItems, setCartItems] = useState({});
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const storedCart = localStorage.getItem("cartItems");
+      if (!storedCart || storedCart === "undefined") return {};
+      return JSON.parse(storedCart);
+    } catch {
+      return {};
+    }
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState([]);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingDeliveryMan, setLoadingDeliveryMan] = useState(true);
 
   const currency = import.meta.env.VITE_CURRENCY;
 
@@ -39,22 +51,22 @@ const AppProvider = ({ children }) => {
 
   // Fetch User
   const fetchUser = async () => {
+    setLoadingUser(true);
     try {
       const { data } = await axios.get(
         "http://localhost:4000/api/user/is-Auth",
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       if (data.success) {
-        setUser(data.user);
-         console.log("Fetch User Response:", data);
+        setRegularUser(data.user);
       } else {
-        setUser(null);
+        setRegularUser(null);
       }
     } catch (error) {
       console.log(error.message);
+      setRegularUser(null);
     }
+    setLoadingUser(false);
   };
   // Fetch All Products
   const fetchProducts = async () => {
@@ -162,6 +174,27 @@ const AppProvider = ({ children }) => {
     }
   };
 
+  // fetch the current deliveryman
+  const fetchCurrentDeliveryMan = async () => {
+    setLoadingDeliveryMan(true);
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/delivery-man/current",
+        { withCredentials: true }
+      );
+      if (data.success) {
+        setDeliveryMan(data.user);
+        console.log("Fetched delivery man:", data.user);
+      } else {
+        setDeliveryMan(null);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setDeliveryMan(null);
+    }
+    setLoadingDeliveryMan(false);
+  };
+
   // Function to update a product in the global state
   const updateProduct = (updatedProduct) => {
     setProducts((prevProducts) =>
@@ -178,10 +211,15 @@ const AppProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchUser();
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  useEffect(() => {
     fetchAdminStatus();
     fetchProducts();
     fetchCategories();
+    fetchCurrentDeliveryMan();
+    fetchUser();
   }, []);
   const value = {
     user,
@@ -207,10 +245,18 @@ const AppProvider = ({ children }) => {
     getCartTotalAmount,
     fetchProducts,
     fetchCategories,
+    fetchCurrentDeliveryMan,
     categories,
     setProducts,
     updateProduct,
     deleteProduct,
+    loadingUser,
+    setLoadingUser,
+    loadingDeliveryMan,
+    regularUser,
+    setRegularUser,
+    deliveryMan,
+    setDeliveryMan,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

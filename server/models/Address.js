@@ -13,6 +13,7 @@ const addressSchema = new Schema(
     zipCode: { type: Number, required: true },
     country: { type: String, required: true },
     phone: { type: String, required: true },
+    zone: { type: String, required: true },
   },
   { timestamps: true }
 );

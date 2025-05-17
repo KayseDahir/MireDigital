@@ -19,7 +19,7 @@ function Cart() {
     getCartTotalAmount,
     navigate,
     axios,
-    user,
+    regularUser,
   } = useAppContext();
 
   const getCart = () => {
@@ -27,8 +27,10 @@ function Cart() {
     for (const key in cartItems) {
       const product = products.find((item) => item._id === key);
       if (product) {
-        product.quantity = cartItems[key];
-        tempArray.push(product);
+        tempArray.push({
+          ...product,
+          cartQuantity: cartItems[key], // use cartQuantity for the cart
+        });
       }
     }
     setCartArray(tempArray);
@@ -63,10 +65,10 @@ function Cart() {
   }, [products, cartItems]);
 
   useEffect(() => {
-    if (user) {
+    if (regularUser) {
       getUserAddress();
     }
-  }, [user]);
+  }, [regularUser]);
 
   const placeOrder = async () => {
     try {
@@ -78,7 +80,7 @@ function Cart() {
         const { data } = await axios.post(
           "http://localhost:4000/api/order/cod",
           {
-            userId: user._id,
+            userId: regularUser._id,
             items: cartArray.map((item) => ({
               product: item._id,
               quantity: item.quantity,
@@ -100,7 +102,7 @@ function Cart() {
         const { data } = await axios.post(
           "http://localhost:4000/api/order/online",
           {
-            userId: user._id,
+            userId: regularUser._id,
             items: cartArray.map((item) => ({
               product: item._id,
               quantity: item.quantity,
@@ -186,20 +188,19 @@ function Cart() {
                           ...prevCartItems,
                           [product._id]: newQuantity,
                         }));
-                        getCart(); // Update the cart array
+                        getCart();
                         toast.success("Cart updated.");
                       }}
                       className="outline-none"
                     >
-                      {Array(
-                        cartItems[product._id] > 9 ? cartItems[product._id] : 9
-                      )
-                        .fill("")
-                        .map((_, index) => (
-                          <option key={index} value={index + 1}>
+                      {Array.from(
+                        { length: product.quantity }, // product.quantity is now the available stock
+                        (_, index) => (
+                          <option key={index + 1} value={index + 1}>
                             {index + 1}
                           </option>
-                        ))}
+                        )
+                      )}
                     </select>
                   </div>
                 </div>

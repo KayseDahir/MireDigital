@@ -74,7 +74,19 @@ function MyOrders() {
                       </div>
                       <div className="flex flex-col justify-center md:ml-8 mb-4 md:mb-0">
                         <p>Qunatity: {item.quantity || " 1"}</p>
-                        <p>Status: {order.status}</p>
+                        <p
+                          className={
+                            order.status === "pending"
+                              ? "text-blue-400 font-semibold"
+                              : order.status === "Shipped"
+                              ? "text-orange-500 font-semibold"
+                              : order.status === "Delivered"
+                              ? "text-green-600 font-semibold"
+                              : ""
+                          }
+                        >
+                          Status: {order.status}
+                        </p>
                         <p>
                           Date: {new Date(order.createdAt).toLocaleDateString()}
                         </p>

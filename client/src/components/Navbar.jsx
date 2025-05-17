@@ -6,8 +6,8 @@ import toast from "react-hot-toast";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const {
-    user,
-    setUser,
+    regularUser,
+    setRegularUser,
     navigate,
     setShowUserLogin,
     searchQuery,
@@ -27,7 +27,7 @@ const Navbar = () => {
       );
       if (data.success) {
         toast.success(data.message);
-        setUser(null);
+        setRegularUser(null);
         navigate("/");
       } else {
         toast.error(data.message);
@@ -80,7 +80,7 @@ const Navbar = () => {
             {getCartItemCount()}
           </button>
         </div>
-        {!user ? (
+        {!regularUser ? (
           <button
             onClick={() => setShowUserLogin(true)}
             className="cursor-pointer px-8 py-2 bg-primary hover:bg-indigo-600 transition text-white rounded-full"
@@ -145,7 +145,7 @@ const Navbar = () => {
           >
             All products
           </NavLink>
-          {user && (
+          {regularUser && (
             <NavLink
               to="/orders"
               onClick={() => setOpen(false)}
@@ -155,7 +155,7 @@ const Navbar = () => {
             </NavLink>
           )}
           <NavLink to="/contact">contact</NavLink>
-          {!user ? (
+          {!regularUser ? (
             <button
               onClick={(() => setOpen(false), setShowUserLogin(true))}
               className="cursor-pointer px-6 py-2 mt-2 bg-primary hover:bg-indigo-600 transition text-white rounded-full text-sm"

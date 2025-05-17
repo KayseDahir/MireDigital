@@ -37,8 +37,11 @@ export const signup = async (req, res, next) => {
     });
     await user.save();
 
+    const subject = "OTP Verification";
+    const text = `Your OTP for account verification is ${otp}. Please use this OTP to complete your registration process.\n\nIf you did not request this, please ignore this email.`;
+
     // Send OTP to user's email
-    await sendOtpEmail(email, otp);
+    await sendOtpEmail(email, subject, text);
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -114,13 +117,10 @@ export const login = async (req, res, next) => {
 
     //check if the user is verified
     if (!user.verified) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message:
-            "Please verify your account using the OTP sent to your email.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Please verify your account using the OTP sent to your email.",
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);

@@ -12,6 +12,8 @@ import productRoutes from "./routes/product.js";
 import cartRoutes from "./routes/cart.js";
 import addressRoutes from "./routes/address.js";
 import orderRoutes from "./routes/order.js";
+import publicRoutes from "./routes/public.js";
+import deliveryRoutes from "./routes/delivery.js";
 
 import connectCloudinary from "./configs/cloudinary.js";
 import { stripeWebhook } from "./controllers/order.js";
@@ -41,6 +43,9 @@ app.use(cors({ origin: allowedOrigins, credentials: true }));
 // Serve static files from the 'uploads/' directory
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Public routes
+app.use("/api/public", publicRoutes);
+
 app.get("/", (req, res, next) => {
   res.send("Hello world!");
 });
@@ -50,6 +55,7 @@ app.use("/api/product", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
+app.use("/api/delivery-man", deliveryRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

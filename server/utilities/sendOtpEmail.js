@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-export const sendOtpEmail = async (email, otp) => {
+export const sendOtpEmail = async (email, subject, text) => {
   try {
     const transporter = nodemailer.createTransport({
       service: "Gmail",
@@ -13,8 +13,8 @@ export const sendOtpEmail = async (email, otp) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "OTP Verification",
-      text: `Your OTP for account verification is ${otp}. Please use this OTP to complete your registeration process.\n\nIf you did not request this, please ignore this email.`,
+      subject,
+      text,
     };
 
     await transporter.sendMail(mailOptions);

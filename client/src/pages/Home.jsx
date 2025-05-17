@@ -1,3 +1,4 @@
+import { Navigate } from "react-router-dom";
 import BestSeller from "../components/BestSeller";
 import Categories from "../components/Categories";
 import MainBanner from "../components/MainBanner";

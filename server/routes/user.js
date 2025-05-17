@@ -11,4 +11,6 @@ router.get("/is-Auth", authUser, userController.isAuth);
 router.post("/logout", authUser, userController.logout);
 router.get("/categories", categoryController.getCategories);
 router.post("/verify-otp", userController.verifyOtp);
+
+
 export default router;
