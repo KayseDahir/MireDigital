@@ -18,7 +18,7 @@ import ProductList from "./src/pages/Admin/ProductList";
 import Orders from "./src/pages/Admin/Orders";
 import AddNewCategory from "./src/pages/Admin/AddNewCategory";
 import InStock from "./src/pages/Admin/InStock";
-import Dashboard from "./src/pages/Admin/dashboard";
+import Dashboard from "./src/pages/Admin/Dashboard";
 import OutStock from "./src/pages/Admin/OutStock";
 import Loading from "./src/components/Loading";
 import ProductManagement from "./src/pages/Admin/ProductManagement";
