@@ -34,6 +34,7 @@ const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "http://localhost:3001",
+  "https://mire-digital.vercel.app",
 ];
 app.post("/stripe", express.raw({ type: "application/json" }), stripeWebhook);
 
