@@ -139,16 +139,38 @@ MireDigital Support Team
 
 export const placeOrderOnline = async (req, res, next) => {
   try {
-    const { items, address, paymentId } = req.body;
+    const { items, address: addressId, paymentId } = req.body;
     const userId = req.userId;
     const { origin } = req.headers;
 
-    if (!address || items.length === 0) {
+    if (!addressId || items.length === 0) {
       return res.status(400).json({
         success: false,
         message: "Address and items are required.",
       });
     }
+
+    // Fetch the full address document
+    const address = await Address.findById(addressId);
+    if (!address) {
+      return res.status(400).json({
+        success: false,
+        message: "Address not found.",
+      });
+    }
+
+    // Extract the zone from the address
+    const zoneName = address.zone;
+    const zoneDocument = await Zone.findOne({ name: zoneName });
+    if (!zoneDocument) {
+      return res.status(404).json({
+        success: false,
+        message: `Zone with name ${zoneName} not found.`,
+      });
+    }
+
+    // Generate OTP for online payment
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     let productData = [];
 
@@ -178,7 +200,9 @@ export const placeOrderOnline = async (req, res, next) => {
       amount,
       address,
       paymentType: "Online",
-      status: "order placed",
+      status: "pending",
+      zone: zoneName,
+      otp,
     });
     // Stripe Gateway initialization
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
@@ -219,8 +243,7 @@ export const placeOrderOnline = async (req, res, next) => {
   }
 };
 
-// Stripe webhook for payment confirmation : /stripe
-
+// Stripe webhooks to verify payment action from stripe : /stripe
 export const stripeWebhook = async (req, res) => {
   // initialize stripe gateway
   const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
@@ -241,35 +264,81 @@ export const stripeWebhook = async (req, res) => {
 
   // Handle the event
   switch (event.type) {
-    case "payment_intent.succeed": {
+    case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
       const payementIntentId = paymentIntent.id;
 
       // Getting session metadata
-      const session = await stripeInstance.checkout.sessions.list({
-        payment_Intent: payementIntentId,
+      const sessionList = await stripeInstance.checkout.sessions.list({
+        payment_intent: payementIntentId,
       });
-
-      const { orderId, userId } = session[0].metadata;
+      const session = sessionList.data[0];
+      if (!session) {
+        console.log(
+          "No Stripe session found for payment intent:",
+          payementIntentId
+        );
+        break;
+      }
+      const { orderId, userId } = session.metadata;
 
       // Update the order status to "paid"
       await Order.findByIdAndUpdate(orderId, {
         isPaid: true,
+        status: "Delivered",
       });
       // clear the user cart
       await User.findByIdAndUpdate(userId, { cartItems: {} });
+
+      // Fetch order, address, and user details for email
+      const order = await Order.findById(orderId);
+      const address = order.address;
+      const email = address.email;
+      // Send OTP along with order confirmation email
+      const subject = "Order Confirmation";
+      const text = `Dear ${address.firstName} ${address.lastName},
+
+Thank you for shopping with MireDigital! Your online payment was successful and your order has been placed.
+
+Order Number: ${order._id}
+Total Amount: $${order.amount}
+Payment Method: Online Payment
+
+Shipping Information:
+Address: ${address.street}, ${address.city}, ${address.state}, ${
+        address.country
+      }, ${address.zipCode}
+Estimated Delivery Date: ${new Date(
+        Date.now() + 5 * 24 * 60 * 60 * 1000
+      ).toLocaleDateString()} (5 business days)
+
+If you have any questions or concerns, please contact our support team.
+
+Thank you for choosing MireDigital! We look forward to serving you again.
+
+Best regards,  
+MireDigital Support Team
+`;
+      await sendOtpEmail(email, subject, text);
       break;
     }
-    case "payement_intent.payment_failed": {
+    case "payment_intent.payment_failed": {
       const paymentIntent = event.data.object;
       const payementIntentId = paymentIntent.id;
 
       // Getting session metadata
-      const session = await stripeInstance.checkout.sessions.list({
-        payment_Intent: payementIntentId,
+      const sessionList = await stripeInstance.checkout.sessions.list({
+        payment_intent: payementIntentId,
       });
-
-      const { orderId } = session[0].metadata;
+      const session = sessionList.data[0];
+      if (!session) {
+        console.log(
+          "No Stripe session found for payment intent:",
+          payementIntentId
+        );
+        break;
+      }
+      const { orderId, userId } = session.metadata;
 
       await Order.findByIdAndDelete(orderId);
       break;

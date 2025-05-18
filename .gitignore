@@ -19,7 +19,7 @@ client/public/images/
 
 # Sensitive files
 .env
-server/configs/
+# server/configs/
 
 # OS-specific files
 .DS_Store
