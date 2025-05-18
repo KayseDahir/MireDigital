@@ -35,12 +35,7 @@ const AppProvider = ({ children }) => {
   //Fetch Admin status
   const fetchAdminStatus = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/admin/is-Auth",
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.get("/api/admin/is-Auth");
       if (data.success) {
         setIsAdmin(true);
       } else {
@@ -56,10 +51,7 @@ const AppProvider = ({ children }) => {
   const fetchUser = async () => {
     setLoadingUser(true);
     try {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/user/is-Auth",
-        { withCredentials: true }
-      );
+      const { data } = await axios.get("/api/user/is-Auth");
       if (data.success) {
         setRegularUser(data.user);
       } else {
@@ -74,12 +66,7 @@ const AppProvider = ({ children }) => {
   // Fetch All Products
   const fetchProducts = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/product/list",
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.get("/api/product/list");
       if (data.success) {
         setProducts(data.products);
       } else {
@@ -161,12 +148,7 @@ const AppProvider = ({ children }) => {
   // Fetch All Categories
   const fetchCategories = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/user/categories",
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.get("/api/user/categories");
       if (data.success) {
         setCategories(data.categories);
       } else {
@@ -181,10 +163,7 @@ const AppProvider = ({ children }) => {
   const fetchCurrentDeliveryMan = async () => {
     setLoadingDeliveryMan(true);
     try {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/delivery-man/current",
-        { withCredentials: true }
-      );
+      const { data } = await axios.get("/api/delivery-man/current");
       if (data.success) {
         setDeliveryMan(data.user);
         console.log("Fetched delivery man:", data.user);

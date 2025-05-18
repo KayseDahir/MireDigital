@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import {
+  HiOutlineMagnifyingGlass,
+  HiOutlineShoppingCart,
+  HiOutlineBars3,
+  HiOutlineUser,
+  HiOutlineArrowRightOnRectangle,
+  HiOutlineHome,
+  HiOutlineClipboard,
+  HiOutlineEnvelope,
+} from "react-icons/hi2";
 import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
@@ -56,18 +66,14 @@ const Navbar = () => {
             type="text"
             placeholder="Search products"
           />
-          <img
-            src="/images/search_icon.svg"
-            alt="search"
-            className="w-6 h-6 opacity-90 cursor-pointer"
-          />
+          <HiOutlineMagnifyingGlass className="w-6 h-6 opacity-90 cursor-pointer" />
         </div>
 
         <div
           onClick={() => navigate("/cart")}
           className="relative cursor-pointer"
         >
-          <img src="/images/nav_cart_icon.svg" className="w-6 opacity-80" />
+          <HiOutlineShoppingCart className="w-6 h-6 opacity-80" />
 
           <button className="absolute -top-2 -right-3 text-xs text-white bg-primary w-[18px] h-[18px] rounded-full">
             {getCartItemCount()}
@@ -82,7 +88,7 @@ const Navbar = () => {
           </button>
         ) : (
           <div className="relative group">
-            <img src="/images/profile_icon.png" className="w-10" />
+            <HiOutlineUser className="w-10 h-10" />
             <ul className="hidden group-hover:block absolute top-8 right-0 bg-white shadow-md rounded-md w-40 text-sm text-gray-700 z-50">
               <li
                 onClick={() => navigate("my-orders")}
@@ -117,7 +123,7 @@ const Navbar = () => {
           aria-label="Menu"
           className=""
         >
-          <img src="/images/menu_icon.svg" alt="menu" className="w-8 h-8" />
+          <HiOutlineBars3 className="w-8 h-8" />
         </button>
       </div>
 
