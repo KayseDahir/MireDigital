@@ -12,11 +12,10 @@ const DeliveryManLogin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/delivery-man/login",
-        { email, password },
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/delivery-man/login", {
+        email,
+        password,
+      });
       if (data.success) {
         setDeliveryMan(data.user);
         console.log("Logged in user:", data.user);

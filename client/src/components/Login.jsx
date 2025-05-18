@@ -15,15 +15,11 @@ const Login = () => {
     try {
       e.preventDefault();
       if (state === "signup") {
-        const { data } = await axios.post(
-          `http://localhost:4000/api/user/signup`,
-          {
-            name,
-            email,
-            password,
-          },
-          { withCredentials: true }
-        );
+        const { data } = await axios.post(`/api/user/signup`, {
+          name,
+          email,
+          password,
+        });
         if (data.success) {
           toast.success(data.message);
           setState("verifyOtp");
@@ -32,11 +28,10 @@ const Login = () => {
           toast.error(data.message);
         }
       } else if (state === "verifyOtp") {
-        const { data } = await axios.post(
-          "http://localhost:4000/api/user/verify-otp",
-          { email, otp },
-          { withCredentials: true }
-        );
+        const { data } = await axios.post("/api/user/verify-otp", {
+          email,
+          otp,
+        });
 
         if (data.success) {
           toast.success(data.message);
@@ -46,14 +41,10 @@ const Login = () => {
         }
       } else {
         //Login request
-        const { data } = await axios.post(
-          `http://localhost:4000/api/user/login`,
-          {
-            email,
-            password,
-          },
-          { withCredentials: true }
-        );
+        const { data } = await axios.post(`/api/user/login`, {
+          email,
+          password,
+        });
         if (data.success) {
           setRegularUser(data.user);
           navigate("/");

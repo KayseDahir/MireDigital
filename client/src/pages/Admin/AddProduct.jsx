@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  HiOutlineCube,
-  HiOutlineDocumentText,
-  HiOutlineTag,
-  HiOutlineCurrencyDollar,
-  HiOutlinePhoto,
-} from "react-icons/hi2";
+import { HiOutlineCube } from "react-icons/hi2";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 
@@ -39,11 +33,7 @@ const AddProduct = () => {
       for (let i = 0; i < files.length; i++) {
         formData.append("image", files[i]);
       }
-      const { data } = await axios.post(
-        "http://localhost:4000/api/product/add",
-        formData,
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/product/add", formData);
 
       if (data.success) {
         toast.success(data.message);

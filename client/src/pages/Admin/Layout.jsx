@@ -90,11 +90,7 @@ const AdminLayout = () => {
 
   const handleLogout = async () => {
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/admin/logout",
-        {},
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/admin/logout", {});
       if (data.success) {
         toast.success(data.message);
         setIsAdmin(false); // Clear admin state
@@ -115,12 +111,7 @@ const AdminLayout = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:4000/api/admin/is-Auth",
-          {
-            withCredentials: true,
-          }
-        );
+        const { data } = await axios.get("/api/admin/is-Auth");
         if (!data.success) {
           console.log("data", data);
           setIsAdmin(false);

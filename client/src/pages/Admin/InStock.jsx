@@ -126,20 +126,16 @@ function InStock() {
   const handleSave = async () => {
     if (!editProduct) return;
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/product/update",
-        {
-          id: editProduct._id,
-          productData: {
-            name: editProduct.name,
-            description: editProduct.description,
-            category: editProduct.category,
-            quantity: editProduct.quantity,
-            price: editProduct.price,
-          },
+      const { data } = await axios.post("/api/product/update", {
+        id: editProduct._id,
+        productData: {
+          name: editProduct.name,
+          description: editProduct.description,
+          category: editProduct.category,
+          quantity: editProduct.quantity,
+          price: editProduct.price,
         },
-        { withCredentials: true } // Move this to the third parameter
-      );
+      });
 
       updateProduct(editProduct);
       setSnackbarMessage(data.message || "Product updated successfully!");
@@ -153,11 +149,9 @@ function InStock() {
 
   const handleDelete = async () => {
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/product/delete",
-        { id: editProduct._id },
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/product/delete", {
+        id: editProduct._id,
+      });
       if (data.success) {
         toast.success(data.message);
         deleteProduct(editProduct._id);

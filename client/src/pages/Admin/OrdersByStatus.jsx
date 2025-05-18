@@ -3,7 +3,6 @@ import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
 import { useParams } from "react-router-dom";
 
-
 const OrdersByStatus = () => {
   const { axios, navigate } = useAppContext();
   const [orders, setOrders] = useState([]);
@@ -14,8 +13,7 @@ const OrdersByStatus = () => {
     const fetchOrders = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:4000/api/order/admin/orders?status=${status}`,
-          { withCredentials: true }
+          `/api/order/admin/orders?status=${status}`
         );
         if (data.success) {
           setOrders(data.data);
@@ -29,7 +27,6 @@ const OrdersByStatus = () => {
     fetchOrders();
   }, [status, axios]);
 
-  
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">

@@ -22,10 +22,7 @@ const DeliveryMenList = () => {
   useEffect(() => {
     const fetchDeliveryMen = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:4000/api/admin/delivery-men",
-          { withCredentials: true }
-        );
+        const { data } = await axios.get("/api/admin/delivery-men");
         if (data.success) {
           setDeliveryMen(data.data);
         } else {
@@ -38,10 +35,7 @@ const DeliveryMenList = () => {
 
     const fetchOrder = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:4000/api/order/admin/orders/${orderId}`,
-          { withCredentials: true }
-        );
+        const { data } = await axios.get(`/api/order/admin/orders/${orderId}`);
         if (data.success) setOrder(data.data);
         else toast.error(data.message);
       } catch (error) {
@@ -50,10 +44,7 @@ const DeliveryMenList = () => {
     };
     const fetchAllOrders = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:4000/api/order/admin/orders",
-          { withCredentials: true }
-        );
+        const { data } = await axios.get("/api/order/admin/orders");
         if (data.success) setAllOrders(data.data);
       } catch (error) {
         toast.error(error.response?.data?.message || "Failed to fetch orders");
@@ -66,11 +57,10 @@ const DeliveryMenList = () => {
 
   const assignDeliveryMan = async (deliveryManId) => {
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/admin/assign-order",
-        { orderId, deliveryManId },
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/admin/assign-order", {
+        orderId,
+        deliveryManId,
+      });
       if (data.success) {
         toast.success("Delivery Man assigned successfully!");
         navigate("/admin/OrdersByStatus");

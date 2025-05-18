@@ -18,13 +18,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/user/logout",
-        {},
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.post("/api/user/logout", {});
       if (data.success) {
         toast.success(data.message);
         setRegularUser(null);
@@ -42,7 +36,6 @@ const Navbar = () => {
       navigate("/products");
     }
   }, [searchQuery]);
-
 
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 py-4 border-b border-gray-300 bg-white relative transition-all">

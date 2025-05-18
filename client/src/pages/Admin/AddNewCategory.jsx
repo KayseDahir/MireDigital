@@ -24,11 +24,7 @@ function AddNewCategory() {
     console.log([...formData.entries()]); // Debugging: Log formData
 
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/admin/add-category",
-        formData,
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/admin/add-category", formData);
 
       if (data.success) {
         toast.success(data.message);

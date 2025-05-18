@@ -10,14 +10,10 @@ function AdminLogin() {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/admin/login",
-        {
-          email,
-          password,
-        },
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/admin/login", {
+        email,
+        password,
+      });
       if (data.success) {
         setIsAdmin(true);
         toast.success(data.message);

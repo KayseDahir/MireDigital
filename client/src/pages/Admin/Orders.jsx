@@ -19,12 +19,7 @@ function Orders() {
 
   const fetchOrders = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/order/admin",
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.get("/api/order/admin");
       if (data.success) {
         setOrders(data.orders);
         console.log(data.orders);

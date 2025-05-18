@@ -38,9 +38,7 @@ function AddAddress() {
   useEffect(() => {
     const fetchZones = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:4000/api/public/zones"
-        );
+        const { data } = await axios.get("/api/public/zones");
         console.log("Fetched zones response:", data); // Debug log
         if (data.success) {
           setZones(data.data); // Correctly access the zones from data.data

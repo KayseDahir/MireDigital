@@ -23,10 +23,7 @@ const CreateDeliveryMan = () => {
   useEffect(() => {
     const fetchZones = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:4000/api/admin/zones",
-          { withCredentials: true }
-        );
+        const { data } = await axios.get("/api/admin/zones");
         if (data.success) setZones(data.data);
         else toast.error(data.message);
       } catch (error) {
@@ -46,11 +43,9 @@ const CreateDeliveryMan = () => {
       return;
     }
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/admin/create-zone",
-        { name: newZone },
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/admin/create-zone", {
+        name: newZone,
+      });
       if (data.success) {
         toast.success("Zone added successfully");
         setZones([...zones, data.zone]);
@@ -67,9 +62,8 @@ const CreateDeliveryMan = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/admin/create-delivery-man",
-        formData,
-        { withCredentials: true }
+        "/api/admin/create-delivery-man",
+        formData
       );
       if (data.success) {
         toast.success(data.message);

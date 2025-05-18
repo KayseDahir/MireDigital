@@ -38,12 +38,7 @@ function Cart() {
 
   const getUserAddress = async () => {
     try {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/address/get",
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.get("/api/address/get");
       if (data.success) {
         setAddresses(data.addresses);
         if (data.addresses.length > 0) {
@@ -77,18 +72,14 @@ function Cart() {
         return;
       }
       if (payementOption === "COD") {
-        const { data } = await axios.post(
-          "http://localhost:4000/api/order/cod",
-          {
-            userId: regularUser._id,
-            items: cartArray.map((item) => ({
-              product: item._id,
-              quantity: item.quantity,
-            })),
-            address: selectedAddress._id,
-          },
-          { withCredentials: true }
-        );
+        const { data } = await axios.post("/api/order/cod", {
+          userId: regularUser._id,
+          items: cartArray.map((item) => ({
+            product: item._id,
+            quantity: item.quantity,
+          })),
+          address: selectedAddress._id,
+        });
 
         if (data.success) {
           toast.success(data.message);
@@ -99,21 +90,18 @@ function Cart() {
         }
       } else {
         // place order with stripe
-        const { data } = await axios.post(
-          "http://localhost:4000/api/order/online",
-          {
-            userId: regularUser._id,
-            items: cartArray.map((item) => ({
-              product: item._id,
-              quantity: item.quantity,
-            })),
-            address: selectedAddress._id,
-          },
-          { withCredentials: true }
-        );
+        const { data } = await axios.post("/api/order/online", {
+          userId: regularUser._id,
+          items: cartArray.map((item) => ({
+            product: item._id,
+            quantity: item.quantity,
+          })),
+          address: selectedAddress._id,
+        });
 
         if (data.success) {
           window.location.replace(data.url);
+          setCartItems({});
         } else {
           toast.error(data.message);
         }
@@ -207,7 +195,7 @@ function Cart() {
               </div>
             </div>
             <p className="text-center">
-              ${product.offerPrice * product.quantity}
+              ${product.offerPrice * product.cartQuantity}
             </p>
             <button
               onClick={() => removeFromCart(product._id)}

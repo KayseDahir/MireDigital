@@ -7,9 +7,7 @@ function MyOrders() {
 
   const fetchMyOrders = async () => {
     try {
-      const { data } = await axios.get("http://localhost:4000/api/order/user", {
-        withCredentials: true,
-      });
+      const { data } = await axios.get("/api/order/user");
       if (data.success) {
         console.log("My Orders Data:", data.orders);
         setMyOrders(data.orders);

@@ -11,10 +11,7 @@ const DeliveryDashboard = () => {
   useEffect(() => {
     const fetchAssignedOrders = async () => {
       try {
-        const { data } = await axios.get(
-          "http://localhost:4000/api/delivery-man/assigned-orders",
-          { withCredentials: true }
-        );
+        const { data } = await axios.get("/api/delivery-man/assigned-orders");
         if (data.success) setOrders(data.data);
         else toast.error(data.message);
       } catch (error) {
@@ -32,11 +29,10 @@ const DeliveryDashboard = () => {
     try {
       const otp = otpInputs[orderId];
       if (!otp) return toast.error("Please enter the OTP");
-      const { data } = await axios.post(
-        "http://localhost:4000/api/delivery-man/verify-otp",
-        { orderId, otp },
-        { withCredentials: true }
-      );
+      const { data } = await axios.post("/api/delivery-man/verify-otp", {
+        orderId,
+        otp,
+      });
       if (data.success) {
         toast.success("Order marked as delivered!");
         setOrders((prev) =>
