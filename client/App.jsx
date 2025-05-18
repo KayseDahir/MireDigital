@@ -9,7 +9,7 @@ import Login from "./src/components/Login";
 import AdminLogin from "./src/components/Admin/AdminLogin";
 import AdminLayout from "./src/pages/Admin/Layout";
 import ProductCategory from "./src/pages/ProductCategory";
-import ProductDetails from "./src/pages/productDetails";
+import ProductDetails from "./src/pages/ProductDetails";
 import AddProduct from "./src/pages/Admin/AddProduct";
 import Cart from "./src/pages/Cart";
 import AddAddress from "./src/pages/AddAddress";
