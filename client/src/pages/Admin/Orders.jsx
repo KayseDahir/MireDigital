@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
+  const [filter, setFilter] = useState("All");
   const { axios } = useAppContext();
   const navigate = useNavigate(); // Initialize navigate
 
@@ -39,11 +40,47 @@ function Orders() {
     fetchOrders();
   }, []);
 
+  const filteredOrders = orders.filter((order) => {
+    if (filter === "All") return true;
+    if (filter === "Assigned") return !!order.assignedTo;
+    if (filter === "Unassigned") return !order.assignedTo;
+    return true;
+  });
   return (
     <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll">
       <div className="md:p-10 p-4 space-y-4">
-        <h2 className="text-lg font-medium">Orders List</h2>
-        {orders
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-medium">Orders List</h2>
+          <div className="flex gap-2">
+            <button
+              className={`px-3 py-1 rounded ${
+                filter === "All" ? "bg-primary text-white" : "bg-gray-200"
+              }`}
+              onClick={() => setFilter("All")}
+            >
+              All
+            </button>
+            <button
+              className={`px-3 py-1 rounded ${
+                filter === "Unassigned"
+                  ? "bg-primary text-white"
+                  : "bg-gray-200"
+              }`}
+              onClick={() => setFilter("Unassigned")}
+            >
+              Unassigned
+            </button>
+            <button
+              className={`px-3 py-1 rounded ${
+                filter === "Assigned" ? "bg-primary text-white" : "bg-gray-200"
+              }`}
+              onClick={() => setFilter("Assigned")}
+            >
+              Assigned
+            </button>
+          </div>
+        </div>
+        {filteredOrders
           .slice()
           .sort((a, b) => {
             //unassigned orders first
