@@ -198,7 +198,7 @@ export const placeOrderOnline = async (req, res, next) => {
       userId,
       items,
       amount,
-      address,
+      address: address._id,
       paymentType: "Online",
       status: "pending",
       zone: zoneName,
@@ -270,14 +270,23 @@ export const stripeWebhook = async (req, res) => {
       const { orderId, userId } = session.metadata || {};
 
       if (orderId && userId) {
-        await Order.findByIdAndUpdate(orderId, {
-          isPaid: true,
-          status: "Delivered",
-        });
-        await User.findByIdAndUpdate(userId, { cartItems: {} });
-        console.log(
-          `Order ${orderId} marked as paid via checkout.session.completed`
-        );
+        try {
+          const updatedOrder = await Order.findByIdAndUpdate(
+            orderId,
+            {
+              isPaid: true,
+              status: "Delivered",
+            },
+            { new: true }
+          );
+          console.log("Updated order:", updatedOrder);
+          await User.findByIdAndUpdate(userId, { cartItems: {} });
+          console.log(
+            `Order ${orderId} marked as paid via checkout.session.completed`
+          );
+        } catch (error) {
+          console.log("Error updating order status:", error);
+        }
       } else {
         console.log("Missing orderId or userId in session metadata");
       }
