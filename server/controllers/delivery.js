@@ -257,8 +257,8 @@ export const deliveryManLogin = async (req, res, next) => {
     // Set token as HTTP-only cookie
     res.cookie("deliveryToken", deliveryToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
     });
 
     res.status(200).json({
