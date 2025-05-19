@@ -204,6 +204,7 @@ export const placeOrderOnline = async (req, res, next) => {
       zone: zoneName,
       otp,
     });
+    console.log("Online order created:", order);
     // Stripe Gateway initialization
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -265,42 +266,15 @@ export const stripeWebhook = async (req, res) => {
 
   // Handle the event
   switch (event.type) {
-    case "checkout.session.completed": {
-      const session = event.data.object;
-      const { orderId, userId } = session.metadata || {};
-
-      if (orderId && userId) {
-        try {
-          const updatedOrder = await Order.findByIdAndUpdate(
-            orderId,
-            {
-              isPaid: true,
-              status: "Delivered",
-            },
-            { new: true }
-          );
-          console.log("Updated order:", updatedOrder);
-          await User.findByIdAndUpdate(userId, { cartItems: {} });
-          console.log(
-            `Order ${orderId} marked as paid via checkout.session.completed`
-          );
-        } catch (error) {
-          console.log("Error updating order status:", error);
-        }
-      } else {
-        console.log("Missing orderId or userId in session metadata");
-      }
-      break;
-    }
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
       const payementIntentId = paymentIntent.id;
 
       // Getting session metadata
-      const sessionList = await stripeInstance.checkout.sessions.list({
+      const session = await stripeInstance.checkout.sessions.list({
         payment_intent: payementIntentId,
       });
-      const session = sessionList.data[0];
+
       if (!session) {
         console.log(
           "No Stripe session found for payment intent:",
@@ -308,7 +282,7 @@ export const stripeWebhook = async (req, res) => {
         );
         break;
       }
-      const { orderId, userId } = session.metadata;
+      const { orderId, userId } = session.data[0].metadata;
 
       // Update the order status to "paid"
       await Order.findByIdAndUpdate(orderId, {
