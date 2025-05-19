@@ -265,6 +265,24 @@ export const stripeWebhook = async (req, res) => {
 
   // Handle the event
   switch (event.type) {
+    case "checkout.session.completed": {
+      const session = event.data.object;
+      const { orderId, userId } = session.metadata || {};
+
+      if (orderId && userId) {
+        await Order.findByIdAndUpdate(orderId, {
+          isPaid: true,
+          status: "Delivered",
+        });
+        await User.findByIdAndUpdate(userId, { cartItems: {} });
+        console.log(
+          `Order ${orderId} marked as paid via checkout.session.completed`
+        );
+      } else {
+        console.log("Missing orderId or userId in session metadata");
+      }
+      break;
+    }
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
       const payementIntentId = paymentIntent.id;
