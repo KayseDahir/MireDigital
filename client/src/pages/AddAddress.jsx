@@ -62,13 +62,7 @@ function AddAddress() {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/address/add",
-        { address },
-        {
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.post("/api/address/add", { address });
       if (data.success) {
         toast.success(data.message);
         setAddress({

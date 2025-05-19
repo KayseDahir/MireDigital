@@ -14,8 +14,8 @@ dist/
 build/
 
 # Public assets (if not needed)
-client/public/icons/
-client/public/images/
+# client/public/icons/
+# client/public/images/
 
 # Sensitive files
 .env
