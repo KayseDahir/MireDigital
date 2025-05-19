@@ -76,7 +76,7 @@ function Cart() {
           userId: regularUser._id,
           items: cartArray.map((item) => ({
             product: item._id,
-            quantity: item.quantity,
+            quantity: item.cartQuantity,
           })),
           address: selectedAddress._id,
         });
@@ -94,7 +94,7 @@ function Cart() {
           userId: regularUser._id,
           items: cartArray.map((item) => ({
             product: item._id,
-            quantity: item.quantity,
+            quantity: item.cartQuantity,
           })),
           address: selectedAddress._id,
         });
