@@ -293,10 +293,11 @@ export const stripeWebhook = async (req, res) => {
       const payementIntentId = paymentIntent.id;
 
       // Getting session metadata
-      const session = await stripeInstance.checkout.sessions.list({
+      const sessionList = await stripeInstance.checkout.sessions.list({
         payment_intent: payementIntentId,
       });
 
+      const session = sessionList.data[0];
       if (!session) {
         console.log(
           "No Stripe session found for payment intent:",
@@ -304,7 +305,7 @@ export const stripeWebhook = async (req, res) => {
         );
         break;
       }
-      const { orderId, userId } = session.data[0].metadata;
+      const { orderId, userId } = session.metadata;
 
       // Update the order status to "paid"
       await Order.findByIdAndUpdate(orderId, {
