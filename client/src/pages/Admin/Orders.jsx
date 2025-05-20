@@ -15,6 +15,11 @@ import toast from "react-hot-toast";
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState("All");
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [zoneDeliveryMen, setZoneDeliveryMen] = useState([]);
+  const [pendingOrdersCount, setPendingOrdersCount] = useState({});
+
   const { axios } = useAppContext();
   const navigate = useNavigate(); // Initialize navigate
 
@@ -31,6 +36,9 @@ function Orders() {
       toast.error(error.message);
     }
   };
+
+  // Fetch delivery men for a specifi zone
+  
 
   const redirectToAssignDeliveryMan = (orderId) => {
     navigate(`/admin/delivery-men?orderId=${orderId}`); // Redirect with orderId

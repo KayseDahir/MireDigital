@@ -278,6 +278,51 @@ export const deliveryManLogin = async (req, res, next) => {
   }
 };
 
+// Retrieve all the deliveryMen in a given zone
+export const getDeliveryMenInZone = async (req, res, next) => {
+  try {
+    const { zone } = req.query;
+
+    if (!zone) {
+      return res.status(400).json({
+        success: false,
+        message: "Zone is required",
+      });
+    }
+
+    // Find the zone document
+    const zoneDoc = await Zone.findOne({ name: zone });
+    if (!zoneDoc) {
+      return res.status(404).json({
+        success: false,
+        message: "Zone not found",
+      });
+    }
+
+    // Find delivery men in this zone
+    const deliveryMen = await User.find({
+      role: "deliveryMan",
+      zone: zoneDoc._id,
+    }).select("name email phone");
+
+    if (!deliveryMen || deliveryMen.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No delivery men found in this zone",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: deliveryMen,
+    });
+  } catch (error) {
+    console.log("Error in getDeliveryMenInZone controller:", error.message); // Debug log
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// Get all the 
 // Delivery man stay logged in
 export const getLoggedInDeliveryMan = async (req, res, next) => {
   try {

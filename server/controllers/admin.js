@@ -12,10 +12,11 @@ export const adminLogin = async (req, res, next) => {
       const token = jwt.sign({ email }, process.env.JWT_SECRET, {
         expiresIn: "7d",
       });
+      const isProduction = process.env.NODE_ENV === "production";
       res.cookie("adminToken", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
       });
       return res
         .status(200)
@@ -53,10 +54,12 @@ export const authAdmin = (req, res, next) => {
 //admin logout : /api/admin/logout
 export const adminLogout = async (req, res, next) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.clearCookie("adminToken", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     });
     return res
       .status(200)
