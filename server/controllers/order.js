@@ -5,6 +5,8 @@ import stripe from "stripe";
 import User from "../models/User.js";
 import Zone from "../models/Zone.js";
 import { sendOtpEmail } from "../utilities/sendOtpEmail.js";
+import { get } from "mongoose";
+import getDateDaysAgo from "../helpers/getDateDaysAgo.js";
 
 //place Order COD: /api/order/cod
 
@@ -477,4 +479,97 @@ export const getMyAssignedOrders = async (req, res) => {
   }
 };
 
-//
+//Get order report : /api/report/orders?days=7
+export const getOrderReport = async (req, res) => {
+  try {
+    const days = parseInt(req.query.days) || 7;
+    const fromDate = getDateDaysAgo(days);
+
+    // Fetch orders in the time range
+    const orders = await Order.find({ createdAt: { $gte: fromDate } })
+      .populate("userId", "name email")
+      .populate("items.product");
+
+    // summary
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce(
+      (sum, order) => sum + (order.amount || 0),
+      0
+    );
+    const deliveredOrders = orders.filter(
+      (order) => order.status === "Delivered"
+    ).length;
+    const pendingOrders = orders.filter(
+      (order) => order.status === "pending"
+    ).length;
+
+    // orders per day
+    const ordersPerDayMap = {};
+    const revenuePerDayMap = {};
+    for (let i = 0; i < days; i++) {
+      const d = new Date(fromDate);
+      d.setDate(d.getDate() + i);
+      const key = d.toISOString().slice(0, 10);
+      ordersPerDayMap[key] = 0;
+      revenuePerDayMap[key] = 0;
+    }
+    orders.forEach((order) => {
+      const key = order.createdAt.toISOString().slice(0, 10);
+      if (ordersPerDayMap[key] !== undefined) {
+        ordersPerDayMap[key]++;
+        revenuePerDayMap[key] += order.amount || 0;
+      }
+    });
+    const ordersPerDay = Object.keys(ordersPerDayMap).map((date) => ({
+      date,
+      count: ordersPerDayMap[date],
+    }));
+    const revenuePerDay = Object.keys(revenuePerDayMap).map((date) => ({
+      date,
+      revenue: revenuePerDayMap[date],
+    }));
+
+    // Top products
+    const productCount = {};
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        const name = item.product?.name || "Unknown";
+        productCount[name] = (productCount[name] || 0) + item.quantity;
+      });
+    });
+    const topProducts = Object.entries(productCount)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, count]) => ({ name, count }));
+
+    // Recent orders (last 10)
+    const recentOrders = orders
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 10)
+      .map((order) => ({
+        id: order._id,
+        user: order.userId?.name || "Unknown",
+        email: order.userId?.email || "Unknown",
+        amount: order.amount,
+        status: order.status,
+        date: order.createdAt.toISOString().slice(0, 10),
+      }));
+
+    res.status(200).json({
+      success: true,
+      report: {
+        totalOrders,
+        totalRevenue,
+        deliveredOrders,
+        pendingOrders,
+        ordersPerDay,
+        revenuePerDay,
+        topProducts,
+        recentOrders,
+      },
+    });
+  } catch (error) {
+    console.log("Error getting order report:", error);
+    res.status(500).json({ success: false, message: "Internal server error." });
+  }
+};

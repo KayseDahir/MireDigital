@@ -11,4 +11,6 @@ router.post("/online", authUser, orderController.placeOrderOnline);
 router.get("/user", authUser, orderController.getUserOrders);
 router.get("/admin", authAdmin, orderController.getAllOrders);
 router.get("/admin/orders", authAdmin, orderController.getAdminOrders);
+router.get("/admin/orders-report", authAdmin, orderController.getOrderReport);
 export default router;
+

@@ -322,7 +322,7 @@ export const getDeliveryMenInZone = async (req, res, next) => {
   }
 };
 
-// Get all the 
+// Get all the
 // Delivery man stay logged in
 export const getLoggedInDeliveryMan = async (req, res, next) => {
   try {
@@ -350,5 +350,61 @@ export const getLoggedInDeliveryMan = async (req, res, next) => {
   } catch (error) {
     console.log("Error getting delivery man orders:", error);
     res.status(500).json({ success: false, message: "Internal server error." });
+  }
+};
+
+// Given a zone name return : Each delivery man in that zone , their name, zone, and pending order count (orders with status "pending" or "shipped")
+
+export const getDeliveryMenWithPendingCountInZone = async (req, res, next) => {
+  try {
+    const { zone } = req.query;
+    if (!zone) {
+      return res.status(400).json({
+        success: false,
+        message: "Zone is required",
+      });
+    }
+
+    // Find the zone document
+    const zoneDoc = await Zone.findOne({ name: zone });
+    if (!zoneDoc) {
+      return res.status(400).json({
+        success: false,
+        message: "Zone not found",
+      });
+    }
+
+    const deliveryMen = await User.find({
+      role: "deliveryMan",
+      zone: zoneDoc._id,
+    }).select("name email zone");
+
+    // Find delivery man, count their pending orders
+    const results = await Promise.all(
+      deliveryMen.map(async (deliveryMan) => {
+        const pendingCount = await Order.countDocuments({
+          assignedTo: deliveryMan._id,
+          status: { $in: ["Pending", "Shipped"] },
+        });
+        return {
+          _id: deliveryMan._id,
+          name: deliveryMan.name,
+          email: deliveryMan.email,
+          zone: zoneDoc.name,
+          pendingOrderCount: pendingCount,
+        };
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      data: results,
+    });
+  } catch (error) {
+    console.log(
+      "Error in getDeliveryMenWithPendingCountInZone controller:",
+      error.message
+    ); // Debug log
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

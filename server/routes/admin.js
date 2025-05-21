@@ -8,6 +8,7 @@ import {
   getDeliveryMen,
   createZone,
   getZones,
+  getDeliveryMenWithPendingCountInZone,
 } from "../controllers/delivery.js";
 import authAdmin from "../middlewares/authAdmin.js";
 
@@ -36,6 +37,11 @@ router.delete(
 router.post("/create-delivery-man", authAdmin, createDeliveryMan);
 router.post("/assign-order", authAdmin, assignOrderToDeliveryMan);
 router.get("/delivery-men", authAdmin, getDeliveryMen);
+router.get(
+  "/delivery-men-in-zone",
+  authAdmin,
+  getDeliveryMenWithPendingCountInZone
+);
 
 // Zone management routes
 router.post("/create-zone", authAdmin, createZone);

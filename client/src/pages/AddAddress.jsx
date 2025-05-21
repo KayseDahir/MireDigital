@@ -18,6 +18,7 @@ function InputField({ type, placeholder, name, handleChange, address }) {
 }
 
 function AddAddress() {
+  console.log("AddAddress component rendered");
   const [zones, setZones] = useState([]); // Store zones fetched from the backend
   const [address, setAddress] = useState({
     firstName: "",
@@ -32,7 +33,7 @@ function AddAddress() {
     zone: "", // Add zone field
   });
 
-  const { axios, navigate, user } = useAppContext();
+  const { axios, navigate, regularUser } = useAppContext();
 
   // Fetch zones from the backend
   useEffect(() => {
@@ -85,10 +86,10 @@ function AddAddress() {
   };
 
   useEffect(() => {
-    if (!user) {
+    if (regularUser === null) {
       navigate("/cart");
     }
-  }, []);
+  }, [regularUser, navigate]);
 
   return (
     <div className="mt-16 pb-16">

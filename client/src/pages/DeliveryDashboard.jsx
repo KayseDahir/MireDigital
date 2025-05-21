@@ -49,6 +49,12 @@ const DeliveryDashboard = () => {
     }
   };
 
+  const sortedOrders = orders.slice().sort((a, b) => {
+    if (a.status !== "Delivered" && b.status === "Delivered") return -1;
+    if (a.status === "Delivered" && b.status !== "Delivered") return 1;
+    return 0;
+  });
+
   return (
     <div>
       <DeliveryManNavbar />
@@ -57,11 +63,11 @@ const DeliveryDashboard = () => {
         <p className="mb-6">
           Welcome, {deliveryMan?.name}! Here are your assigned orders:
         </p>
-        {orders.length === 0 ? (
+        {sortedOrders.length === 0 ? (
           <div className="text-gray-500">No assigned orders.</div>
         ) : (
           <div className="space-y-6">
-            {orders.map((order) => (
+            {sortedOrders.map((order) => (
               <div
                 key={order._id}
                 className="p-4 bg-white rounded shadow border"

@@ -21,7 +21,7 @@ function Cart() {
     axios,
     regularUser,
   } = useAppContext();
-
+  console.log("navigate in Cart:", navigate, typeof navigate);
   const getCart = () => {
     let tempArray = [];
     for (const key in cartItems) {
@@ -259,7 +259,10 @@ function Cart() {
                   </p>
                 ))}
                 <p
-                  onClick={() => navigate("/add-adress")}
+                  onClick={() => {
+                    console.log("Add address clicked");
+                    navigate("/add-address");
+                  }}
                   className="text-indigo-500 text-center cursor-pointer p-2 hover:bg-indigo-500/10"
                 >
                   Add address

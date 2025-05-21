@@ -31,18 +31,21 @@ const OrdersByStatus = () => {
     <div className="p-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold mb-6">Orders By Status</h2>
-        <select
-          className="border px-2 py-1 rounded mb-6"
-          value={status}
-          onChange={(e) => {
-            if (e.target.value)
-              navigate(`/admin/OrdersByStatus/${e.target.value}`);
-          }}
-        >
-          <option value="pending">Pending</option>
-          <option value="Shipped">Shipped</option>
-          <option value="Delivered">Delivered</option>
-        </select>
+        <div className="flex gap-2">
+          {["pending", "Shipped", "Delivered"].map((s) => (
+            <button
+              key={s}
+              onClick={() => navigate(`/admin/OrdersByStatus/${s}`)}
+              className={`px-3 py-1 rounded ${
+                status === s
+                  ? "bg-primary text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
       </div>
       <h2 className="text-2xl font-semibold mb-6">{status} Orders</h2>
       {orders.length === 0 ? (
