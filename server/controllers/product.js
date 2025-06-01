@@ -8,17 +8,18 @@ export const addProduct = async (req, res) => {
   try {
     let productData = JSON.parse(req.body.productData);
     const images = req.files;
+    console.log("req.body:", req.body);
+    console.log("req.files:", req.files);
 
     // Resolve category text to ObjectId
     const category = await Category.findOne({
-      text: new RegExp(`^${productData.category.trim()}$`, "i"), // Case-insensitive match
+      path: new RegExp(`^${productData.category.trim()}$`, "i"),
     });
     if (!category) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid category" });
     }
-
     productData.category = category.text;
 
     // Upload images to Cloudinary

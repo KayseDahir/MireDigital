@@ -66,7 +66,10 @@ function Categories() {
             }}
           >
             <img
-              src={`http://localhost:4000/${category.image.replace("\\", "/")}`} // Fix the image path
+              src={`${import.meta.env.VITE_SERVER_URL}/${category.image.replace(
+                "\\",
+                "/"
+              )}`} // Fix the image path
               alt={category.text}
               className="w-full h-full object-cover rounded-lg"
             />

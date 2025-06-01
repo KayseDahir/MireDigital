@@ -30,6 +30,7 @@ import ProtectedDeliveryManRoute from "./src/components/ProtectedDeliveryManRout
 import DeliveryManProvider from "./src/context/DeliveryManContext";
 import OrdersByStatus from "./src/pages/Admin/OrdersByStatus";
 import OrdersByStatusSelector from "./src/pages/Admin/OrdersByStatusSelector";
+import ContactUs from "./src/components/ContactUs";
 
 function App() {
   const location = useLocation();
@@ -56,6 +57,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<AllProducts />} />
+          <Route path="/contact" element={<ContactUs />} />
           <Route path="/loader" element={<Loading />} />
 
           <Route

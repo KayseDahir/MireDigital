@@ -14,6 +14,7 @@ import addressRoutes from "./routes/address.js";
 import orderRoutes from "./routes/order.js";
 import publicRoutes from "./routes/public.js";
 import deliveryRoutes from "./routes/delivery.js";
+import newsletterRoutes from "./routes/NewsLetter.js";
 
 import connectCloudinary from "./configs/cloudinary.js";
 import { stripeWebhook } from "./controllers/order.js";
@@ -57,6 +58,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/delivery-man", deliveryRoutes);
+app.use("/api/newsletter", newsletterRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

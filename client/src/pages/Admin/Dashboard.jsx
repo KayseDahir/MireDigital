@@ -22,7 +22,6 @@ import {
 import { useAppContext } from "../../context/AppContext";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { use } from "react";
 import { useState } from "react";
 
 const FILTER_OPTIONS = [
@@ -35,14 +34,13 @@ function Dashboard() {
   const { products, axios } = useAppContext();
   const [days, setDays] = useState(7);
   const [report, setReport] = useState(null);
-  const [loading, setLoading] = useState(false);
   console.log("Products:", products);
 
   // Fetch report when filter changes
   const fetchReport = async () => {
     try {
       const { data } = await axios.get(
-        `/api/order/admin/orders-report?days=${days}`
+        `/api/public/orders-report?days=${days}`
       );
       if (data.success) {
         setReport(data.report);

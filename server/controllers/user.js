@@ -194,3 +194,77 @@ export const logout = async (req, res, next) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+//  send OTP to user's email for password reset
+
+export const sendResetOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please provide an email." });
+    }
+
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found." });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    user.otp = otp;
+    await user.save();
+
+    //send OTP vai email
+    const subject = "Password Reset OTP";
+    const text = `Your OTP for password reset is ${otp}. Please use this OTP to reset your password.\n\nIf you did not request this, please ignore this email.`;
+    await sendOtpEmail(email, subject, text);
+
+    res.status(200).json({ success: true, message: "OTP sent to your email." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+// Reset user passwor :
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    if (!email || !otp || !newPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please fill all fields." });
+    }
+
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found." });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ success: false, message: "Invalid OTP." });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    // Update the user's password
+    user.password = hashedPassword;
+    user.otp = null;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Password reset successfully. You can now log in with your new password.",
+    });
+  } catch (error) {
+    console.error("Error in resetPassword controller:", error.message); // Debug log
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

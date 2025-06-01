@@ -6,6 +6,7 @@ import DeliveryManNavbar from "./DeliveryManNavbar";
 const DeliveryDashboard = () => {
   const { axios, deliveryMan } = useAppContext();
   const [orders, setOrders] = useState([]);
+  const [filter, setFilter] = useState("All");
   const [otpInputs, setOtpInputs] = useState({}); // { orderId: otp }
 
   useEffect(() => {
@@ -55,19 +56,52 @@ const DeliveryDashboard = () => {
     return 0;
   });
 
+  const filteredOrders = sortedOrders.filter((order) => {
+    if (filter === "All") return true;
+    if (filter === "Delivered") return order.status === "Delivered";
+    if (filter === "Pending") return order.status !== "Delivered";
+    return true;
+  });
   return (
     <div>
       <DeliveryManNavbar />
+
       <div className="p-8">
         <h1 className="text-2xl font-bold mb-4">Delivery Man Dashboard</h1>
         <p className="mb-6">
           Welcome, {deliveryMan?.name}! Here are your assigned orders:
         </p>
-        {sortedOrders.length === 0 ? (
+        <div className="flex gap-2 mb-6 justify-end">
+          <button
+            className={`px-3 py-1 rounded ${
+              filter === "All" ? "bg-primary text-white" : "bg-gray-200"
+            }`}
+            onClick={() => setFilter("All")}
+          >
+            All
+          </button>
+          <button
+            className={`px-3 py-1 rounded ${
+              filter === "Delivered" ? "bg-primary text-white" : "bg-gray-200"
+            }`}
+            onClick={() => setFilter("Delivered")}
+          >
+            Delivered
+          </button>
+          <button
+            className={`px-3 py-1 rounded ${
+              filter === "Pending" ? "bg-primary text-white" : "bg-gray-200"
+            }`}
+            onClick={() => setFilter("Pending")}
+          >
+            Pending
+          </button>
+        </div>
+        {filteredOrders.length === 0 ? (
           <div className="text-gray-500">No assigned orders.</div>
         ) : (
           <div className="space-y-6">
-            {sortedOrders.map((order) => (
+            {filteredOrders.map((order) => (
               <div
                 key={order._id}
                 className="p-4 bg-white rounded shadow border"

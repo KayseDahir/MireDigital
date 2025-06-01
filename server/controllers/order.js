@@ -74,6 +74,16 @@ export const placeOrderCOD = async (req, res) => {
     // Generate OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
+    // Before deducting quantity, check if enough stock is available
+    for (const item of items) {
+      const product = await Product.findById(item.product);
+      if (!product || !product.inStock || product.quantity < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for product ${product.name}.`,
+        });
+      }
+    }
     // Create the order
     const order = await Order.create({
       userId,
@@ -85,6 +95,20 @@ export const placeOrderCOD = async (req, res) => {
       zone: zoneName,
       otp,
     });
+
+    //Deduct ordered quantity from the product stock
+    for (const item of items) {
+      const updateProduct = await Product.findByIdAndUpdate(
+        item.product,
+        { $inc: { quantity: -item.quantity } },
+        { new: true }
+      );
+
+      // If quantity is now 0, mark as out of stock
+      if (updateProduct.quantity <= 0) {
+        await Product.findByIdAndUpdate(item.product, { inStock: false });
+      }
+    }
 
     // Send OTP to the user
     const subject = "Delivery OTP";
@@ -196,6 +220,16 @@ export const placeOrderOnline = async (req, res, next) => {
     amount += Math.floor(amount * 0.02);
     // Add a 2% service charge to the total amount
 
+    // Before deducting quantity, check if enough stock is available
+    for (const item of items) {
+      const product = await Product.findById(item.product);
+      if (!product || !product.inStock || product.quantity < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for product ${product.name}.`,
+        });
+      }
+    }
     const order = await Order.create({
       userId,
       items,
@@ -207,6 +241,21 @@ export const placeOrderOnline = async (req, res, next) => {
       otp,
     });
     console.log("Online order created:", order);
+
+    // Deduct ordered quantity from product stock
+    for (const item of items) {
+      const updateProduct = await Product.findByIdAndUpdate(
+        item.product,
+        { $inc: { quantity: -item.quantity } },
+        { new: true }
+      );
+
+      // If quantity is now 0, mark as out of stock
+      if (updateProduct.quantity <= 0) {
+        await Product.findByIdAndUpdate(item.product, { inStock: false });
+      }
+    }
+
     // Stripe Gateway initialization
     const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
 

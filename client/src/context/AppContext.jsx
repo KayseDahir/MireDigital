@@ -192,6 +192,67 @@ const AppProvider = ({ children }) => {
     );
   };
 
+  //Fetch Top selling products from the database.
+  const fetchAndMergeSoldCounts = async () => {
+    try {
+      // Fetch products first if not already loaded
+      if (products.length === 0) {
+        await fetchProducts();
+      }
+      // Fetch top sellers
+      const { data } = await axios.get(
+        "/api/public/orders-report?days=30"
+      );
+      let soldMap = {};
+      if (data.success && data.report?.topProducts) {
+        data.report.topProducts.forEach((tp) => {
+          soldMap[tp.name] = tp.count;
+        });
+      }
+      // Merge sold count into products
+      setProducts((prev) =>
+        prev.map((p) => ({
+          ...p,
+          sold: soldMap[p.name] || 0,
+        }))
+      );
+    } catch (err) {
+      // If error, just set sold to 0 for all products
+      setProducts((prev) =>
+        prev.map((p) => ({
+          ...p,
+          sold: 0,
+        }))
+      );
+      console.error("Error fetching best sellers:", err);
+    }
+  };
+
+  const fetchAllAuth = async () => {
+    // Reset all roles
+    setRegularUser(null);
+    setIsAdmin(false);
+    setDeliveryMan(null);
+
+    // Check admin
+    try {
+      const { data } = await axios.get("/api/admin/is-Auth");
+      if (data.success) setIsAdmin(true);
+    } catch {}
+
+    // Check delivery man
+    try {
+      const { data } = await axios.get("/api/delivery-man/current");
+      if (data.success) setDeliveryMan(data.user);
+    } catch {}
+
+    // Check regular user
+    try {
+      const { data } = await axios.get("/api/user/is-Auth");
+      if (data.success) setRegularUser(data.user);
+    } catch {}
+  };
+
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -202,7 +263,10 @@ const AppProvider = ({ children }) => {
     fetchCategories();
     fetchCurrentDeliveryMan();
     fetchUser();
+    fetchAllAuth();
+    fetchAndMergeSoldCounts();
   }, []);
+
   const value = {
     user,
     setUser,
@@ -239,6 +303,7 @@ const AppProvider = ({ children }) => {
     setRegularUser,
     deliveryMan,
     setDeliveryMan,
+    fetchAllAuth,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

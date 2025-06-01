@@ -1,5 +1,5 @@
 import { useAppContext } from "../context/AppContext";
-
+import { HiMiniFire } from "react-icons/hi2";
 function ProductCard({ product }) {
   const { navigate } = useAppContext();
 
@@ -48,9 +48,18 @@ function ProductCard({ product }) {
             </span>
           </p>
         </div>
+        {/* Sold Count */}
 
+        {product.sold > 1 && (
+          <div className="flex items-center mt-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 mr-2">
+              <HiMiniFire className="w-4 h-4 mr-1 text-orange-500" />
+              Sold: {product.sold}
+            </span>
+          </div>
+        )}
         {/* Rating */}
-        <div className="flex items-center gap-1 ">
+        {/* <div className="flex items-center gap-1 ">
           {Array(5)
             .fill("")
             .map((_, i) => (
@@ -64,7 +73,7 @@ function ProductCard({ product }) {
               />
             ))}
           <p className="text-gray-500 text-xs">(4)</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
